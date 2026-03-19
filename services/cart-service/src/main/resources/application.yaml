@@ -1,2 +1,25 @@
 cart:
   ttl: 30d
+  max-items: 100
+  max-quantity-per-item: 50
+
+spring:
+  application:
+    name: cart-service
+  data:
+    redis:
+      host: redis
+      port: 6379
+      timeout: 3s
+      connect-timeout: 3s
+      lettuce:
+        pool:
+          enabled: true
+          max-active: 16
+          max-idle: 8
+          min-idle: 2
+          max-wait: 2s
+
+server:
+  port: 8080
+  shutdown: graceful
