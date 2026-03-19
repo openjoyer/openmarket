@@ -27,11 +27,18 @@ public class Cart {
                 .filter(i -> i.getSkuId().equals(item.getSkuId()))
                 .findFirst();
         if (foundItem.isPresent()) {
-            foundItem.get().increaseQuantity(1);
+            foundItem.get().increaseQuantity(item.getQuantity());
         } else {
             items.add(item);
         }
         this.updatedAt = Instant.now();
+    }
+
+    public void removeItem(String skuId, int quantity) {
+        Optional<CartItem> foundItem = items.stream()
+                .filter(i -> i.getSkuId().equals(skuId))
+                .findFirst();
+        foundItem.ifPresent(item -> item.decreaseQuantity(quantity));
     }
 
     public double totalPrice() {

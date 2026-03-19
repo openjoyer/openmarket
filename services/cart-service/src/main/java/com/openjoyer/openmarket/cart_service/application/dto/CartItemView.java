@@ -1,13 +1,13 @@
-package com.openjoyer.openmarket.cart_service.interfaces.rest.request;
+package com.openjoyer.openmarket.cart_service.application.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddItemRequest {
+@Data
+public class CartItemView {
     private String skuId;
     private String titleSnapshot;
     private String imageSnapshot;

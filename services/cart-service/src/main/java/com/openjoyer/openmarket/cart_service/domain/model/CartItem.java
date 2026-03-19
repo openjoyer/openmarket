@@ -21,6 +21,16 @@ public class CartItem {
         }
         this.quantity += delta;
     }
+    public void decreaseQuantity(int delta) {
+        if (delta < 0) {
+            throw new IllegalArgumentException("CartItem: delta < 0");
+        }
+        if (delta >= quantity) {
+            quantity = 0;
+        } else {
+            this.quantity -= delta;
+        }
+    }
 
     public double totalPrice() {
         return priceSnapshot * quantity;

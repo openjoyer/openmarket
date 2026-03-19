@@ -40,6 +40,12 @@ public class RedisCartRepository implements CartRepository {
         return cart;
     }
 
+    @Override
+    public void deleteByUserId(String userId) {
+        String key = CartKeyGenerator.getKey(userId);
+        redisTemplate.delete(key);
+    }
+
     static class CartKeyGenerator {
         private CartKeyGenerator() {}
 
