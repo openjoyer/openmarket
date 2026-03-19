@@ -1,0 +1,7 @@
+networks:
+  observability:
+    driver: bridge
+
+#services:
+#  prometheus:
+#    image:
