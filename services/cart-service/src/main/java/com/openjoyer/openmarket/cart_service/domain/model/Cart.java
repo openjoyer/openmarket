@@ -38,7 +38,15 @@ public class Cart {
         Optional<CartItem> foundItem = items.stream()
                 .filter(i -> i.getSkuId().equals(skuId))
                 .findFirst();
-        foundItem.ifPresent(item -> item.decreaseQuantity(quantity));
+
+        if (foundItem.isEmpty()) return;
+
+        CartItem item = foundItem.get();
+        item.decreaseQuantity(quantity);
+        if (item.getQuantity() <= 0) {
+            items.remove(item);
+        }
+        this.updatedAt = Instant.now();
     }
 
     public double totalPrice() {

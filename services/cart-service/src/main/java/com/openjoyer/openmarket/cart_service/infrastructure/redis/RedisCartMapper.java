@@ -24,7 +24,7 @@ public class RedisCartMapper {
                 .map(RedisCartMapper::mapToItemDocument)
                 .toList()
         );
-        doc.setUpdatedAt(doc.getUpdatedAt());
+        doc.setUpdatedAt(cart.getUpdatedAt());
         return doc;
     }
 

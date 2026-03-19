@@ -6,20 +6,18 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.*;
-import tools.jackson.databind.ObjectMapper;
 
 @Configuration
 public class RedisConfig {
     @Bean
-    public RedisTemplate<String, RedisCartDocument> redisTemplate(
-            RedisConnectionFactory connectionFactory,
-            ObjectMapper objectMapper
-    ) {
+    public RedisTemplate<String, RedisCartDocument> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, RedisCartDocument> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
 
         template.setKeySerializer(RedisSerializer.string());
-        template.setValueSerializer(new GenericJacksonJsonRedisSerializer(objectMapper));
+        template.setHashKeySerializer(RedisSerializer.string());
+        template.setValueSerializer(new JacksonJsonRedisSerializer<>(RedisCartDocument.class));
+        template.setHashValueSerializer(new JacksonJsonRedisSerializer<>(RedisCartDocument.class));
 
         template.afterPropertiesSet();
         return template;
