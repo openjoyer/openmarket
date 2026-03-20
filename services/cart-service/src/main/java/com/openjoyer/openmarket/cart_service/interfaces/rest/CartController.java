@@ -8,6 +8,7 @@ import com.openjoyer.openmarket.cart_service.application.usecase.GetCartUseCase;
 import com.openjoyer.openmarket.cart_service.application.usecase.RemoveItemFromCartUseCase;import com.openjoyer.openmarket.cart_service.interfaces.rest.request.AddItemRequest;
 import com.openjoyer.openmarket.cart_service.interfaces.rest.request.DeleteItemRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,12 +20,12 @@ public class CartController {
     private final RemoveItemFromCartUseCase removeItemFromCartUseCase;
 
     @GetMapping("/{userId}")
-    public CartView getCart(@PathVariable String userId) {
-        return getCartUseCase.handle(userId);
+    public ResponseEntity<CartView> getCart(@PathVariable String userId) {
+        return ResponseEntity.ok(getCartUseCase.handle(userId));
     }
 
     @PostMapping("/{userId}")
-    public CartView addItem(@PathVariable String userId, @RequestBody AddItemRequest request) {
+    public ResponseEntity<CartView> addItem(@PathVariable String userId, @RequestBody AddItemRequest request) {
         AddItemCommand command = new AddItemCommand(
                 userId,
                 request.getSkuId(),
@@ -33,16 +34,16 @@ public class CartController {
                 request.getPriceSnapshot(),
                 request.getQuantity()
         );
-        return addItemToCartUseCase.handle(command);
+        return ResponseEntity.ok(addItemToCartUseCase.handle(command));
     }
 
     @DeleteMapping("/{userId}")
-    public CartView removeItem(@PathVariable String userId, @RequestBody DeleteItemRequest request) {
+    public ResponseEntity<CartView> removeItem(@PathVariable String userId, @RequestBody DeleteItemRequest request) {
         RemoveItemCommand command = new RemoveItemCommand(
                 request.getSkuId(),
                 userId,
                 request.getDeleteAmount()
         );
-        return removeItemFromCartUseCase.handle(command);
+        return ResponseEntity.ok(removeItemFromCartUseCase.handle(command));
     }
 }
