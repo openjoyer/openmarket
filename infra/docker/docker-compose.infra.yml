@@ -2,6 +2,14 @@ networks:
   backend:
     driver: bridge
 
+volumes:
+  postgres_data:
+  redis_data:
+  kafka_data:
+  opensearch_data:
+  minio_data:
+  grafana_data:
+
 services:
   postgres:
     image: postgres:16
@@ -19,6 +27,8 @@ services:
       - "5432:5432"
     networks:
       - backend
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   redis:
     image: redis:latest
@@ -33,18 +43,31 @@ services:
       interval: 15s
       timeout: 5s
       retries: 10
+    volumes:
+      - redis_data:/data
 
   opensearch:
-    image: opensearchproject/opensearch:latest
+    image: opensearchproject/opensearch:2.19.1
     container_name: marketplace-opensearch
     restart: unless-stopped
+    environment:
+      discovery.type: single-node
+      OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"
+      bootstrap.memory_lock: "true"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
     ports:
       - "9200:9200"
       - "9600:9600"
+    volumes:
+      - opensearch_data:/usr/share/opensearch/data
+      - ./opensearch/opensearch.yml:/usr/share/opensearch/config/opensearch.yml:ro
     networks:
       - backend
     healthcheck:
       test: [ "CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1" ]
       interval: 15s
       timeout: 10s
-      retries: 10
+      retries: 20

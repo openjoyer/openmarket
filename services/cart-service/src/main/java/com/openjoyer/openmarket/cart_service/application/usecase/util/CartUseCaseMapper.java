@@ -1,5 +1,6 @@
 package com.openjoyer.openmarket.cart_service.application.usecase.util;
 
+import com.openjoyer.openmarket.cart_service.application.command.AddItemCommand;
 import com.openjoyer.openmarket.cart_service.application.dto.CartItemView;
 import com.openjoyer.openmarket.cart_service.application.dto.CartView;
 import com.openjoyer.openmarket.cart_service.domain.model.Cart;
@@ -28,15 +29,5 @@ public class CartUseCaseMapper {
         itemView.setPriceSnapshot(item.getPriceSnapshot());
         itemView.setQuantity(item.getQuantity());
         return itemView;
-    }
-
-    public static CartItem mapRequestToDomain(AddItemRequest req) {
-        return new CartItem(
-                req.getSkuId(),
-                req.getTitleSnapshot(),
-                req.getImageSnapshot(),
-                req.getPriceSnapshot(),
-                req.getQuantity()
-        );
     }
 }

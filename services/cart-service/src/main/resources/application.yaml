@@ -14,12 +14,7 @@ spring:
       connect-timeout: 3s
       lettuce:
         pool:
-          enabled: true
-          max-active: 16
-          max-idle: 8
-          min-idle: 2
-          max-wait: 2s
-
+          enabled: false
 server:
   port: 8080
   shutdown: graceful

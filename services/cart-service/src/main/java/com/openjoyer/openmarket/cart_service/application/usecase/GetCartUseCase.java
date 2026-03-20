@@ -15,6 +15,7 @@ public class GetCartUseCase {
 
     public CartView handle(String userId) {
         Optional<Cart> cart = repository.findByUserId(userId);
-        return cart.map(CartUseCaseMapper::mapToCartView).orElse(null);
+        return cart.map(CartUseCaseMapper::mapToCartView)
+                .orElseGet(() -> CartUseCaseMapper.mapToCartView(Cart.empty(userId)));
     }
 }

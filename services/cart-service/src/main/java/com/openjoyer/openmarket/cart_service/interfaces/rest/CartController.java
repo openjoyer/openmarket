@@ -1,5 +1,7 @@
 package com.openjoyer.openmarket.cart_service.interfaces.rest;
 
+import com.openjoyer.openmarket.cart_service.application.command.AddItemCommand;
+import com.openjoyer.openmarket.cart_service.application.command.RemoveItemCommand;
 import com.openjoyer.openmarket.cart_service.application.dto.CartView;
 import com.openjoyer.openmarket.cart_service.application.usecase.AddItemToCartUseCase;
 import com.openjoyer.openmarket.cart_service.application.usecase.GetCartUseCase;
@@ -23,11 +25,24 @@ public class CartController {
 
     @PostMapping("/{userId}")
     public CartView addItem(@PathVariable String userId, @RequestBody AddItemRequest request) {
-        return addItemToCartUseCase.handle(userId, request);
+        AddItemCommand command = new AddItemCommand(
+                userId,
+                request.getSkuId(),
+                request.getTitleSnapshot(),
+                request.getImageSnapshot(),
+                request.getPriceSnapshot(),
+                request.getQuantity()
+        );
+        return addItemToCartUseCase.handle(command);
     }
 
     @DeleteMapping("/{userId}")
     public CartView removeItem(@PathVariable String userId, @RequestBody DeleteItemRequest request) {
-        return removeItemFromCartUseCase.handle(userId, request);
+        RemoveItemCommand command = new RemoveItemCommand(
+                request.getSkuId(),
+                userId,
+                request.getDeleteAmount()
+        );
+        return removeItemFromCartUseCase.handle(command);
     }
 }

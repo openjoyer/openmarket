@@ -18,6 +18,12 @@ public class Cart {
     private List<CartItem> items;
     private Instant updatedAt;
 
+    public static Cart empty(String userId) {
+        Cart cart = new Cart();
+        cart.setUserId(userId);
+        return cart;
+    }
+
     public List<CartItem> getItems() {
         return Collections.unmodifiableList(items);
     }
