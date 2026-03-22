@@ -4,10 +4,9 @@ import com.openjoyer.openmarket.cart_service.application.command.RemoveItemComma
 import com.openjoyer.openmarket.cart_service.application.dto.CartView;
 import com.openjoyer.openmarket.cart_service.application.usecase.util.CartUseCaseMapper;import com.openjoyer.openmarket.cart_service.domain.model.Cart;
 import com.openjoyer.openmarket.cart_service.domain.repository.CartRepository;
-import com.openjoyer.openmarket.cart_service.interfaces.rest.request.DeleteItemRequest;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor

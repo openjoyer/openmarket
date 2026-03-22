@@ -6,7 +6,7 @@ import com.openjoyer.openmarket.cart_service.application.dto.CartView;
 import com.openjoyer.openmarket.cart_service.application.usecase.AddItemToCartUseCase;
 import com.openjoyer.openmarket.cart_service.application.usecase.GetCartUseCase;
 import com.openjoyer.openmarket.cart_service.application.usecase.RemoveItemFromCartUseCase;import com.openjoyer.openmarket.cart_service.interfaces.rest.request.AddItemRequest;
-import com.openjoyer.openmarket.cart_service.interfaces.rest.request.DeleteItemRequest;
+import com.openjoyer.openmarket.cart_service.interfaces.rest.request.RemoveItemRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +38,7 @@ public class CartController {
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<CartView> removeItem(@PathVariable String userId, @RequestBody DeleteItemRequest request) {
+    public ResponseEntity<CartView> removeItem(@PathVariable String userId, @RequestBody RemoveItemRequest request) {
         RemoveItemCommand command = new RemoveItemCommand(
                 request.getSkuId(),
                 userId,
