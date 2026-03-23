@@ -1,0 +1,76 @@
+server:
+  port: 8080
+
+gateway:
+  services:
+    auth-uri: http://auth-service:8080
+    cart-uri: http://cart-service:8080
+    catalog-uri: http://catalog-service:8080
+
+spring:
+  application:
+    name: api-gateway
+  data:
+    redis:
+      host: redis
+      port: 6379
+  cloud:
+    gateway:
+      server:
+        webflux:
+          metrics:
+            enabled: true
+          routes:
+            - id: cart-service
+              uri: http://cart-service:8080
+              predicates:
+                - Path=/api/v1/cart/**
+              filters:
+                - RewritePath=/cart/?(?<segment>.*), /api/v1/cart/${segment}
+
+            - id: auth-service
+              uri: http://auth-service:8080
+              predicates:
+                - Path=/api/v1/auth/**
+              filters:
+                - RewritePath=/auth/?(?<segment>.*), /api/v1/auth/${segment}
+                - name: RequestRateLimiter
+                  args:
+                    key-resolver: "#{@ipKeyResolver}"
+                    redis-rate-limiter:
+                      replenishRate: 5
+                      burstCapacity: 10
+                      requestedTokens: 1
+
+            - id: catalog-service
+              uri: http://catalog-service:8080
+              predicates:
+                - Path=/api/v1/catalog/**
+              filters:
+                - RewritePath=/catalog/?(?<segment>.*), /api/v1/catalog/${segment}
+                - name: RequestRateLimiter
+                  args:
+                    key-resolver: "#{@userKeyResolver}"
+                    redis-rate-limiter:
+                      replenishRate: 10
+                      burstCapacity: 20
+                      requestedTokens: 1
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowed-origins:
+                  - 'http://localhost:3000'
+                allowed-methods:
+                  - GET
+                  - POST
+                  - PUT
+                  - OPTIONS
+                  - DELETE
+                allowed-headers:
+                  - '*'
+                allow-credentials: true
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.gateway: INFO
+    reactor.netty.http.client: INFO
