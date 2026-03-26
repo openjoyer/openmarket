@@ -9,13 +9,14 @@ eureka:
     register-with-eureka: false
     fetch-registry: false
   instance:
-    hostname: localhost
+    hostname: eureka-server
+    preferIpAddress: false
 
 management:
   endpoints:
     web:
       exposure:
-        exclude: health, info
+        include: health, info
   endpoint:
     health:
       show-details: always
