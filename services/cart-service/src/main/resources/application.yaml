@@ -3,6 +3,11 @@ cart:
   max-items: 100
   max-quantity-per-item: 50
 
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka
+
 spring:
   application:
     name: cart-service

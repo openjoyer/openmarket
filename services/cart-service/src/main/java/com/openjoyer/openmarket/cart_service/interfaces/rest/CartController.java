@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/v1/cart")
 @RequiredArgsConstructor
@@ -18,6 +20,11 @@ public class CartController {
     private final GetCartUseCase getCartUseCase;
     private final AddItemToCartUseCase addItemToCartUseCase;
     private final RemoveItemFromCartUseCase removeItemFromCartUseCase;
+
+    @GetMapping("/ping")
+    public ResponseEntity<?> ping() {
+        return ResponseEntity.ok(Map.of("message", "ok"));
+    }
 
     @GetMapping("/{userId}")
     public ResponseEntity<CartView> getCart(@PathVariable String userId) {
