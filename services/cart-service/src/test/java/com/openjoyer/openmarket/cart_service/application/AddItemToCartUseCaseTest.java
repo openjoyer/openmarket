@@ -107,4 +107,29 @@ class AddItemToCartUseCaseTest {
         verify(repository).findByUserId("user123");
         verify(repository).save(any(Cart.class));
     }
+
+    @Test
+    void handle_shouldAddMultipleItems() {
+        when(repository.findByUserId("user123")).thenReturn(Optional.empty());
+        when(repository.save(any(Cart.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        CartView result = useCase.handle(command);
+
+        assertNotNull(result);
+        assertEquals(1, result.getItems().size());
+        assertEquals(2, result.getItems().get(0).getQuantity());
+    }
+
+    @Test
+    void handle_shouldUpdateTimestamp() {
+        Instant before = Instant.now();
+
+        when(repository.findByUserId("user123")).thenReturn(Optional.empty());
+        when(repository.save(any(Cart.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        CartView result = useCase.handle(command);
+
+        assertNotNull(result.getUpdatedAt());
+        assertTrue(result.getUpdatedAt().isAfter(before) || result.getUpdatedAt().equals(before));
+    }
 }
