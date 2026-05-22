@@ -1,9 +1,7 @@
 package com.openjoyer.openmarket.cart_service.interfaces.rest;
 
-import com.openjoyer.openmarket.cart_service.application.dto.CartCheckoutView;
-import com.openjoyer.openmarket.cart_service.application.usecase.GetCartUseCase;
 import com.openjoyer.openmarket.cart_service.application.usecase.GetCheckoutCartUseCase;
-import com.openjoyer.openmarket.cart_service.domain.repository.CartRepository;
+import com.openjoyer.openmarket.contracts.cart.CartCheckoutView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

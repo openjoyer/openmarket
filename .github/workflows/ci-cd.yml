@@ -3,6 +3,8 @@ name: Marketplace CI/CD
 on:
   push:
     branches: [ master, develop ]
+  pull_request:
+    branches: [ master, develop ]
 
 env:
   REGISTRY: ghcr.io
@@ -30,8 +32,12 @@ jobs:
               - 'services/auth-service/**'
             cart-service:
               - 'services/cart-service/**'
+              - 'contracts/**'
             catalog-service:
               - 'services/catalog-service/**'
+            order-service:
+              - 'services/order-service/**'
+              - 'contracts/**'
             eureka-server:
               - 'services/eureka-server/**'
             infra:
@@ -88,7 +94,7 @@ jobs:
   build:
     name: Build
     needs: [detect-changes, test-unit]
-    if: needs.detect-changes.outputs.services != '[]'
+    if: github.event_name == 'push' && needs.detect-changes.outputs.services != '[]'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -156,4 +162,3 @@ jobs:
       - name: Send Notification
         run: |
           echo "Pipeline completed with status: ${{ job.status }}"
-          # Add Slack/Discord/Email notification here

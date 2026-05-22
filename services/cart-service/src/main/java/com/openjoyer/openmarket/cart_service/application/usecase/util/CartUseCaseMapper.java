@@ -1,11 +1,11 @@
 package com.openjoyer.openmarket.cart_service.application.usecase.util;
 
-import com.openjoyer.openmarket.cart_service.application.dto.CartCheckoutItemView;
-import com.openjoyer.openmarket.cart_service.application.dto.CartCheckoutView;
 import com.openjoyer.openmarket.cart_service.application.dto.CartItemView;
 import com.openjoyer.openmarket.cart_service.application.dto.CartView;
 import com.openjoyer.openmarket.cart_service.domain.model.Cart;
 import com.openjoyer.openmarket.cart_service.domain.model.CartItem;
+import com.openjoyer.openmarket.contracts.cart.CartCheckoutItemView;
+import com.openjoyer.openmarket.contracts.cart.CartCheckoutView;
 
 public class CartUseCaseMapper {
     public static CartView mapToCartView(Cart cart) {

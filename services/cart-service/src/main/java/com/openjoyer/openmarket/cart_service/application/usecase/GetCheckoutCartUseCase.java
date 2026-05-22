@@ -1,9 +1,9 @@
 package com.openjoyer.openmarket.cart_service.application.usecase;
 
-import com.openjoyer.openmarket.cart_service.application.dto.CartCheckoutView;
 import com.openjoyer.openmarket.cart_service.application.usecase.util.CartUseCaseMapper;
 import com.openjoyer.openmarket.cart_service.domain.model.Cart;
 import com.openjoyer.openmarket.cart_service.domain.repository.CartRepository;
+import com.openjoyer.openmarket.contracts.cart.CartCheckoutView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
