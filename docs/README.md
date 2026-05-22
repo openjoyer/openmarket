@@ -30,8 +30,9 @@ OpenMarket - учебный backend маркетплейса с микросер
 
 - Java 21, Spring Boot 4, Spring Cloud
 - Gradle Kotlin DSL
-- PostgreSQL, Redis, Kafka
-- Docker Compose
+- PostgreSQL, Redis, 
+- Kafka
+- Docker
 - GitHub Actions для PR-проверок
 
 ## Структура
@@ -45,7 +46,19 @@ docs/          документация проекта
 
 ## Запуск
 
-Compose-манифесты лежат в `infra/docker`:
+Основные команды разработки вынесены в `Makefile`:
+
+| Команда | Что делает |
+| --- | --- |
+| `make` | Показывает доступные команды |
+| `make up` | Поднимает инфраструктуру и app-сервисы через Docker Compose |
+| `make up-infra` | Поднимает только инфраструктуру |
+| `make test` | Запускает тесты всех сервисов |
+| `make test-service SERVICE=cart-service` | Запускает тесты одного сервиса |
+| `make logs` | Показывает логи compose-сервисов |
+| `make down` | Останавливает compose-сервисы |
+
+Прямой запуск через Compose тоже доступен; манифесты лежат в `infra/docker`:
 
 ```sh
 docker compose -f infra/docker/docker-compose.yml up --build
