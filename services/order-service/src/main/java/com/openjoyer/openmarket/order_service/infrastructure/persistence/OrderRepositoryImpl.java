@@ -26,7 +26,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public List<Order> findByUserId(String userId) {
-        return jpaOrderRepository.findByUserId(userId);
+        return jpaOrderRepository.findByUserIdWithItems(userId);
     }
 
     @Override

@@ -11,6 +11,9 @@ import java.util.UUID;
 public interface JpaOrderRepository extends JpaRepository<Order, UUID> {
     List<Order> findByUserId(String userId);
 
+    @Query("select o from Order o left join fetch o.items where o.userId = :userId")
+    List<Order> findByUserIdWithItems(String userId);
+
     @Query("select o from Order o left join fetch o.items where o.id = :id")
     Optional<Order> findByIdWithItems(UUID userId);
 }
