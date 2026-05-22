@@ -11,11 +11,10 @@ import java.util.List;
 
 public class OrderDtoMapper {
     public static OrderView toOrderView(Order order) {
-        if (order == null) {
-            return null;
-        }
+        if (order == null) return null;
+
         List<OrderItemView> items = (order.getItems() == null) ?
-                Collections.EMPTY_LIST : order.getItems().stream()
+                Collections.emptyList() : order.getItems().stream()
                 .map(OrderDtoMapper::toItemView)
                 .toList();
         OrderView view = new OrderView();
