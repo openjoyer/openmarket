@@ -91,23 +91,6 @@ jobs:
           path: services/${{ matrix.service }}/build/reports/tests/
           retention-days: 7
 
-  pr-checks:
-    name: PR Checks
-    needs: [detect-changes, test-unit]
-    if: always() && github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Verify PR checks
-        run: |
-          if [ "${{ needs.detect-changes.result }}" != "success" ]; then
-            exit 1
-          fi
-
-          if [ "${{ needs.test-unit.result }}" != "success" ] && [ "${{ needs.test-unit.result }}" != "skipped" ]; then
-            exit 1
-          fi
-
   build:
     name: Build
     needs: [detect-changes, test-unit]
