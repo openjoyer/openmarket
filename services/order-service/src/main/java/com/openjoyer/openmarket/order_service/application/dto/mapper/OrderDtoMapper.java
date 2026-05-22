@@ -18,8 +18,9 @@ public class OrderDtoMapper {
                 .map(OrderDtoMapper::toItemView)
                 .toList();
         OrderView view = new OrderView();
-        view.setUserId(order.getId() != null ? order.getId().toString() : null);
+        view.setUserId((order.getUserId() != null && !order.getUserId().isEmpty()) ? order.getUserId() : null);
         view.setOrderId(order.getId().toString());
+        view.setOrderStatus(order.getOrderStatus());
         view.setItems(items);
         return view;
     }
