@@ -41,11 +41,11 @@ jobs:
         id: set-matrix
         run: |
           CHANGES='${{ steps.filter.outputs.changes }}'
-          if [ "$CHANGES" = "[]" ]; then
+          echo "Changes detected: $CHANGES"
+          if [ "$CHANGES" = "[]" ] || [ -z "$CHANGES" ]; then
             echo "matrix={\"service\":[]}" >> $GITHUB_OUTPUT
           else
-            SERVICES=$(echo "$CHANGES" | jq -c 'split("\n") | map(select(length > 0))')
-            echo "matrix={\"service\":$SERVICES}" >> $GITHUB_OUTPUT
+            echo "matrix={\"service\":$CHANGES}" >> $GITHUB_OUTPUT
           fi
 
   test-unit:
