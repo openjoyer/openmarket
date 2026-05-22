@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class RemoveItemFromCartUseCase {
     private final CartRepository repository;
 
-    @Transactional
     public CartView handle(RemoveItemCommand command) {
         Cart cart = repository.findByUserId(command.userId()).orElseGet(() -> Cart.empty(command.userId()));
         cart.removeItem(command.skuId(), command.quantity());

@@ -21,6 +21,7 @@ public class Cart {
     public static Cart empty(String userId) {
         Cart cart = new Cart();
         cart.setUserId(userId);
+        cart.setItems(Collections.emptyList());
         return cart;
     }
 
@@ -59,5 +60,9 @@ public class Cart {
         return items.stream()
                 .mapToDouble(CartItem::totalPrice)
                 .sum();
+    }
+
+    public boolean isEmpty() {
+        return items.isEmpty();
     }
 }

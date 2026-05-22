@@ -5,12 +5,14 @@ import com.openjoyer.openmarket.cart_service.application.command.RemoveItemComma
 import com.openjoyer.openmarket.cart_service.application.dto.CartView;
 import com.openjoyer.openmarket.cart_service.application.usecase.AddItemToCartUseCase;
 import com.openjoyer.openmarket.cart_service.application.usecase.GetCartUseCase;
-import com.openjoyer.openmarket.cart_service.application.usecase.RemoveItemFromCartUseCase;import com.openjoyer.openmarket.cart_service.interfaces.rest.request.AddItemRequest;
+import com.openjoyer.openmarket.cart_service.application.usecase.RemoveItemFromCartUseCase;
+import com.openjoyer.openmarket.cart_service.interfaces.rest.request.AddItemRequest;
 import com.openjoyer.openmarket.cart_service.interfaces.rest.request.RemoveItemRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.Map;
 
 @RestController
@@ -23,7 +25,7 @@ public class CartController {
 
     @GetMapping("/ping")
     public ResponseEntity<?> ping() {
-        return ResponseEntity.ok(Map.of("message", "ok"));
+        return ResponseEntity.ok(Map.of("message", "ok", "timestamp", Instant.now()));
     }
 
     @GetMapping("/{userId}")

@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class AddItemToCartUseCase {
     private final CartRepository repository;
 
-    @Transactional
     public CartView handle(AddItemCommand command) {
         CartItem item = new CartItem(
                 command.skuId(),
