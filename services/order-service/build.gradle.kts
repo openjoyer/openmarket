@@ -20,9 +20,25 @@ repositories {
 extra["springCloudVersion"] = "2025.1.0"
 
 dependencies {
+	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-validation")
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	runtimeOnly("org.postgresql:postgresql")
+	implementation("org.springframework.kafka:spring-kafka")
+	implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
-	implementation("org.springframework.boot:spring-boot-starter-webmvc")
-	implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
+	runtimeOnly("io.micrometer:micrometer-registry-prometheus")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
+	compileOnly("org.projectlombok:lombok")
+	annotationProcessor("org.projectlombok:lombok")
+	implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("org.springframework.kafka:spring-kafka-test")
+	testImplementation("org.testcontainers:junit-jupiter")
+	testImplementation("org.testcontainers:postgresql")
+	testImplementation("org.testcontainers:kafka")
+	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 dependencyManagement {
