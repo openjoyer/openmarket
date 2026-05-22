@@ -32,6 +32,8 @@ jobs:
               - 'services/cart-service/**'
             catalog-service:
               - 'services/catalog-service/**'
+            order-service:
+              - 'services/order-service/**'
             eureka-server:
               - 'services/eureka-server/**'
             infra:
@@ -156,4 +158,3 @@ jobs:
       - name: Send Notification
         run: |
           echo "Pipeline completed with status: ${{ job.status }}"
-          # Add Slack/Discord/Email notification here
