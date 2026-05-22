@@ -6,10 +6,6 @@ on:
   pull_request:
     branches: [ master, develop ]
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_PREFIX: ${{ github.repository_owner }}/marketplace
-
 jobs:
   detect-changes:
     name: Detect Changed Services
@@ -40,8 +36,6 @@ jobs:
               - 'contracts/**'
             eureka-server:
               - 'services/eureka-server/**'
-            infra:
-              - 'infra/**'
 
       - name: Set Matrix
         id: set-matrix
@@ -67,7 +61,6 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up JDK 21
-        if: matrix.service != 'infra'
         uses: actions/setup-java@v4
         with:
           java-version: '21'
@@ -75,90 +68,85 @@ jobs:
           cache: 'gradle'
 
       - name: Grant execute permission for gradlew
-        if: matrix.service != 'infra'
         run: chmod +x services/${{ matrix.service }}/gradlew
 
       - name: Run Unit Tests
-        if: matrix.service != 'infra'
         working-directory: services/${{ matrix.service }}
         run: ./gradlew test --no-daemon
 
       - name: Upload Test Reports
-        if: always() && matrix.service != 'infra'
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-reports-${{ matrix.service }}
           path: services/${{ matrix.service }}/build/reports/tests/
           retention-days: 7
 
-  build:
-    name: Build
+  pr-checks:
+    name: PR Checks
     needs: [detect-changes, test-unit]
-    if: github.event_name == 'push' && needs.detect-changes.outputs.services != '[]'
+    if: always() && github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.detect-changes.outputs.matrix) }}
 
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build Docker Image
-        if: matrix.service != 'infra'
-        uses: docker/build-push-action@v5
-        with:
-          context: services/${{ matrix.service }}
-          file: services/${{ matrix.service }}/Dockerfile
-          push: false
-          tags: ${{ matrix.service }}:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-  deploy-staging:
-    name: Deploy to Staging
-    needs: [detect-changes, build]
-    if: github.ref == 'refs/heads/develop' && needs.detect-changes.outputs.services != '[]'
-    runs-on: ubuntu-latest
-    environment:
-      name: staging
-      url: https://staging.marketplace.example.com
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Deploy to Staging
+      - name: Verify PR checks
         run: |
-          echo "Deploying to staging environment..."
-          # Add your deployment commands here
-          # Example: kubectl, docker-compose, etc.
+          if [ "${{ needs.detect-changes.result }}" != "success" ]; then
+            exit 1
+          fi
 
-  deploy-production:
-    name: Deploy to Production
-    needs: [detect-changes, build]
-    if: github.ref == 'refs/heads/master' && needs.detect-changes.outputs.services != '[]'
-    runs-on: ubuntu-latest
-    environment:
-      name: production
-      url: https://marketplace.example.com
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Deploy to Production
-        run: |
-          echo "Deploying to production environment..."
-          # Add your deployment commands here
+          if [ "${{ needs.test-unit.result }}" != "success" ] && [ "${{ needs.test-unit.result }}" != "skipped" ]; then
+            exit 1
+          fi
 
   notify:
     name: Notify Results
-    needs: [test-unit, build]
+    needs: [detect-changes, test-unit, pr-checks]
     if: always()
     runs-on: ubuntu-latest
 
     steps:
-      - name: Send Notification
+      - name: Render Pipeline Report
+        env:
+          CHANGED_SERVICES: ${{ needs.detect-changes.outputs.services }}
+          DETECT_STATUS: ${{ needs.detect-changes.result }}
+          TEST_STATUS: ${{ needs.test-unit.result }}
+          PR_STATUS: ${{ needs.pr-checks.result }}
+          TRIGGER: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
         run: |
-          echo "Pipeline completed with status: ${{ job.status }}"
+          marker() {
+            case "$1" in
+              success) printf "[OK]" ;;
+              failure) printf "[FAIL]" ;;
+              cancelled) printf "[STOP]" ;;
+              skipped) printf "[SKIP]" ;;
+              *) printf "[----]" ;;
+            esac
+          }
+
+          if [ "$CHANGED_SERVICES" = "[]" ] || [ -z "$CHANGED_SERVICES" ]; then
+            CHANGED_SERVICES="none"
+          fi
+
+          printf "\n"
+          printf "========================================\n"
+          printf "          MARKETPLACE CI REPORT\n"
+          printf "========================================\n"
+          printf "Trigger:          %s\n" "$TRIGGER"
+          printf "Ref:              %s\n" "$REF_NAME"
+          printf "Changed services: %s\n" "$CHANGED_SERVICES"
+          printf "\n"
+          printf "%-18s %s %s\n" "Detect changes" "$(marker "$DETECT_STATUS")" "$DETECT_STATUS"
+          printf "%-18s %s %s\n" "Unit tests" "$(marker "$TEST_STATUS")" "$TEST_STATUS"
+          printf "%-18s %s %s\n" "PR gate" "$(marker "$PR_STATUS")" "$PR_STATUS"
+          printf "========================================\n"
+
+          printf "## Marketplace CI Report\n\n" >> "$GITHUB_STEP_SUMMARY"
+          printf "| Stage | Result |\n" >> "$GITHUB_STEP_SUMMARY"
+          printf "| --- | --- |\n" >> "$GITHUB_STEP_SUMMARY"
+          printf '| Detect changes | %s `%s` |\n' "$(marker "$DETECT_STATUS")" "$DETECT_STATUS" >> "$GITHUB_STEP_SUMMARY"
+          printf '| Unit tests | %s `%s` |\n' "$(marker "$TEST_STATUS")" "$TEST_STATUS" >> "$GITHUB_STEP_SUMMARY"
+          printf '| PR gate | %s `%s` |\n\n' "$(marker "$PR_STATUS")" "$PR_STATUS" >> "$GITHUB_STEP_SUMMARY"
+          printf 'Changed services: `%s`\n\n' "$CHANGED_SERVICES" >> "$GITHUB_STEP_SUMMARY"
+          printf 'Trigger: `%s` on `%s`\n' "$TRIGGER" "$REF_NAME" >> "$GITHUB_STEP_SUMMARY"
