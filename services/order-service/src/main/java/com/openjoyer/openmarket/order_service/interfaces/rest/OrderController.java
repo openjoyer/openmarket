@@ -3,7 +3,6 @@ package com.openjoyer.openmarket.order_service.interfaces.rest;
 import com.openjoyer.openmarket.order_service.application.dto.OrderView;
 import com.openjoyer.openmarket.order_service.application.usecase.GetOrderByIdUseCase;
 import com.openjoyer.openmarket.order_service.application.usecase.GetOrderByUserIdUseCase;
-import com.openjoyer.openmarket.order_service.domain.exceptions.OrderNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,12 +24,8 @@ public class OrderController {
     }
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<OrderView> getOrderById(@PathVariable String orderId) {
-        try {
-            OrderView view = getOrderByIdUseCase.handle(UUID.fromString(orderId));
-            return ResponseEntity.ok(view);
-        } catch (OrderNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<OrderView> getOrderById(@PathVariable UUID orderId) {
+        OrderView view = getOrderByIdUseCase.handle(orderId);
+        return ResponseEntity.ok(view);
     }
 }
