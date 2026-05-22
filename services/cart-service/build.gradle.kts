@@ -27,6 +27,8 @@ repositories {
 extra["springCloudVersion"] = "2025.1.0"
 
 dependencies {
+	implementation("com.openjoyer:contracts:1.0-SNAPSHOT")
+
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.boot:spring-boot-starter-data-redis")
 	implementation("org.springframework.boot:spring-boot-starter-webmvc")

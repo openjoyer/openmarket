@@ -1,4 +1,4 @@
-package com.openjoyer.openmarket.cart_service.application.dto;
+package com.openjoyer.openmarket.contracts.cart;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
