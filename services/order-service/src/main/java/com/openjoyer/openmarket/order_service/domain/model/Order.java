@@ -1,18 +1,23 @@
 package com.openjoyer.openmarket.order_service.domain.model;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.UuidGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "orders")
 @Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 public class Order {
     @Id
@@ -25,6 +30,9 @@ public class Order {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 64)
     private OrderStatus orderStatus;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderItem> items = new ArrayList<>();
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -45,4 +53,37 @@ public class Order {
 
     @Column(name = "refunded_at")
     private Instant refundedAt;
+
+    public static Order create(String userId, List<OrderItem> items) {
+        if (userId == null || userId.isBlank()) {
+            throw new IllegalArgumentException("userId must not be blank");
+        }
+        if (items == null || items.isEmpty()) {
+            throw new IllegalArgumentException("order must contain at least one item");
+        }
+
+        Order order = new Order();
+        order.userId = userId;
+        order.orderStatus = OrderStatus.CREATED;
+        items.forEach(order::addItem);
+        return order;
+    }
+
+    public void addItem(OrderItem item) {
+        if (item == null) {
+            throw new IllegalArgumentException("order item must not be null");
+        }
+        item.setOrder(this);
+        items.add(item);
+    }
+
+    public void markPaid() {
+        orderStatus = OrderStatus.PAID;
+        paidAt = Instant.now();
+    }
+
+    public void cancel() {
+        orderStatus = OrderStatus.CANCELED;
+        cancelledAt = Instant.now();
+    }
 }

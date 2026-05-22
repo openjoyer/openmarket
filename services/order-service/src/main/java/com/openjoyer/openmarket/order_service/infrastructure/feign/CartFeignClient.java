@@ -6,9 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "cart-service", path = "/internal/cart")
+@FeignClient(name = "cart-service", path = "/api/v1/internal/cart")
 public interface CartFeignClient {
-
     @GetMapping("/{userId}/checkout")
     ResponseEntity<CartCheckoutView> getCheckoutCart(@PathVariable String userId);
 }
