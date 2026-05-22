@@ -9,11 +9,16 @@ RUN chmod +x gradlew
 RUN ./gradlew dependencies --no-daemon || true
 
 COPY src src
+
+FROM build AS test
+RUN ./gradlew test --tests "*Test" -x "*IntegrationTest" --no-daemon
+
+FROM build AS package
 RUN ./gradlew bootJar --no-daemon
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app
-COPY --from=build /app/build/libs/*.jar app.jar
+COPY --from=package /app/build/libs/*.jar app.jar
 
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]

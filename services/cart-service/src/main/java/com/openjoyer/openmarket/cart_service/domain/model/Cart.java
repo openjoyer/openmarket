@@ -21,11 +21,14 @@ public class Cart {
     public static Cart empty(String userId) {
         Cart cart = new Cart();
         cart.setUserId(userId);
-        cart.setItems(Collections.emptyList());
+        cart.setItems(new java.util.ArrayList<>());
         return cart;
     }
 
     public List<CartItem> getItems() {
+        if (items == null) {
+            return Collections.emptyList();
+        }
         return Collections.unmodifiableList(items);
     }
 
