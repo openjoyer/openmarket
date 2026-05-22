@@ -49,7 +49,7 @@ jobs:
           fi
 
   test-unit:
-    name: Unit Tests - ${{ matrix.service }}
+    name: Unit Tests
     needs: detect-changes
     if: needs.detect-changes.outputs.services != '[]'
     runs-on: ubuntu-latest
@@ -94,7 +94,7 @@ jobs:
           retention-days: 7
 
   test-integration:
-    name: Integration Tests - ${{ matrix.service }}
+    name: Integration Tests
     needs: [detect-changes, test-unit]
     if: needs.detect-changes.outputs.services != '[]'
     runs-on: ubuntu-latest
@@ -136,7 +136,7 @@ jobs:
           fi
 
   build:
-    name: Build - ${{ matrix.service }}
+    name: Build
     needs: [detect-changes, test-unit, test-integration]
     if: needs.detect-changes.outputs.services != '[]'
     runs-on: ubuntu-latest
@@ -192,7 +192,7 @@ jobs:
             VERSION=${{ steps.meta.outputs.version }}
 
   security-scan:
-    name: Security Scan - ${{ matrix.service }}
+    name: Security Scan
     needs: [detect-changes, build]
     if: needs.detect-changes.outputs.services != '[]'
     runs-on: ubuntu-latest
