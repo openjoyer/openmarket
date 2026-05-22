@@ -40,8 +40,13 @@ jobs:
       - name: Set Matrix
         id: set-matrix
         run: |
-          SERVICES=$(echo '${{ steps.filter.outputs.changes }}' | jq -c 'split("\n") | map(select(length > 0))')
-          echo "matrix={\"service\":$SERVICES}" >> $GITHUB_OUTPUT
+          CHANGES='${{ steps.filter.outputs.changes }}'
+          if [ "$CHANGES" = "[]" ]; then
+            echo "matrix={\"service\":[]}" >> $GITHUB_OUTPUT
+          else
+            SERVICES=$(echo "$CHANGES" | jq -c 'split("\n") | map(select(length > 0))')
+            echo "matrix={\"service\":$SERVICES}" >> $GITHUB_OUTPUT
+          fi
 
   test-unit:
     name: Unit Tests - ${{ matrix.service }}
