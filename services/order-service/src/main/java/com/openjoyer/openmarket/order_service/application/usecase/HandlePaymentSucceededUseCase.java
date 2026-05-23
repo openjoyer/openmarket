@@ -20,7 +20,8 @@ public class HandlePaymentSucceededUseCase {
         Order order = orderRepository.findById(event.orderId())
                 .orElseThrow(() -> new OrderNotFoundException(event.orderId()));
 
-        order.markPaid();
-        cartCommandPort.clearCart(order.getUserId());
+        if (order.markPaid()) {
+            cartCommandPort.clearCart(order.getUserId());
+        }
     }
 }

@@ -77,24 +77,27 @@ public class Order {
         items.add(item);
     }
 
-    public void markReserved() {
-        if (orderStatus != OrderStatus.PENDING_RESERVATION) return;
+    public boolean markReserved() {
+        if (orderStatus != OrderStatus.PENDING_RESERVATION) return false;
 
         orderStatus = OrderStatus.PAYMENT_PENDING;
         reservedAt = Instant.now();
+        return true;
     }
 
-    public void markPaid() {
-        if (orderStatus != OrderStatus.PAYMENT_PENDING) return;
+    public boolean markPaid() {
+        if (orderStatus != OrderStatus.PAYMENT_PENDING) return false;
 
         orderStatus = OrderStatus.PROCESSING;
         paidAt = Instant.now();
+        return true;
     }
 
-    public void cancel() {
-        if (orderStatus != OrderStatus.PENDING_RESERVATION && orderStatus != OrderStatus.PAYMENT_PENDING) return;
+    public boolean cancel() {
+        if (orderStatus != OrderStatus.PENDING_RESERVATION && orderStatus != OrderStatus.PAYMENT_PENDING) return false;
 
         orderStatus = OrderStatus.CANCELED;
         cancelledAt = Instant.now();
+        return true;
     }
 }
