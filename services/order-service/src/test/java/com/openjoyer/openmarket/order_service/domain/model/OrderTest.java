@@ -7,6 +7,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -80,6 +81,34 @@ class OrderTest {
     }
 
     @Test
+    void markReserved_shouldIgnoreReservationAfterCancellation() {
+        OrderItem item = OrderItem.create("sku-1", "Keyboard", "keyboard.png", BigDecimal.TEN, 1);
+        Order order = Order.create("user-1", List.of(item));
+
+        order.cancel();
+        var cancelledAt = order.getCancelledAt();
+        order.markReserved();
+
+        assertEquals(OrderStatus.CANCELED, order.getOrderStatus());
+        assertEquals(cancelledAt, order.getCancelledAt());
+        assertNull(order.getReservedAt());
+    }
+
+    @Test
+    void markReserved_shouldIgnoreReservationAfterPayment() {
+        OrderItem item = OrderItem.create("sku-1", "Keyboard", "keyboard.png", BigDecimal.TEN, 1);
+        Order order = Order.create("user-1", List.of(item));
+
+        order.markReserved();
+        order.markPaid();
+        var paidAt = order.getPaidAt();
+        order.markReserved();
+
+        assertEquals(OrderStatus.PROCESSING, order.getOrderStatus());
+        assertEquals(paidAt, order.getPaidAt());
+    }
+
+    @Test
     void markPaid_shouldIgnorePaymentBeforeReservation() {
         OrderItem item = OrderItem.create("sku-1", "Keyboard", "keyboard.png", BigDecimal.TEN, 1);
         Order order = Order.create("user-1", List.of(item));
@@ -87,7 +116,35 @@ class OrderTest {
         order.markPaid();
 
         assertEquals(OrderStatus.PENDING_RESERVATION, order.getOrderStatus());
-        assertEquals(null, order.getPaidAt());
+        assertNull(order.getPaidAt());
+    }
+
+    @Test
+    void markPaid_shouldIgnoreRepeatedPaymentEvent() {
+        OrderItem item = OrderItem.create("sku-1", "Keyboard", "keyboard.png", BigDecimal.TEN, 1);
+        Order order = Order.create("user-1", List.of(item));
+
+        order.markReserved();
+        order.markPaid();
+        var paidAt = order.getPaidAt();
+        order.markPaid();
+
+        assertEquals(OrderStatus.PROCESSING, order.getOrderStatus());
+        assertEquals(paidAt, order.getPaidAt());
+    }
+
+    @Test
+    void markPaid_shouldIgnorePaymentAfterCancellation() {
+        OrderItem item = OrderItem.create("sku-1", "Keyboard", "keyboard.png", BigDecimal.TEN, 1);
+        Order order = Order.create("user-1", List.of(item));
+
+        order.cancel();
+        var cancelledAt = order.getCancelledAt();
+        order.markPaid();
+
+        assertEquals(OrderStatus.CANCELED, order.getOrderStatus());
+        assertEquals(cancelledAt, order.getCancelledAt());
+        assertNull(order.getPaidAt());
     }
 
     @Test
@@ -100,6 +157,31 @@ class OrderTest {
         order.cancel();
 
         assertEquals(OrderStatus.PROCESSING, order.getOrderStatus());
-        assertEquals(null, order.getCancelledAt());
+        assertNull(order.getCancelledAt());
+    }
+
+    @Test
+    void cancel_shouldIgnoreRepeatedCancelEvent() {
+        OrderItem item = OrderItem.create("sku-1", "Keyboard", "keyboard.png", BigDecimal.TEN, 1);
+        Order order = Order.create("user-1", List.of(item));
+
+        order.cancel();
+        var cancelledAt = order.getCancelledAt();
+        order.cancel();
+
+        assertEquals(OrderStatus.CANCELED, order.getOrderStatus());
+        assertEquals(cancelledAt, order.getCancelledAt());
+    }
+
+    @Test
+    void cancel_shouldCancelPaymentPendingOrder() {
+        OrderItem item = OrderItem.create("sku-1", "Keyboard", "keyboard.png", BigDecimal.TEN, 1);
+        Order order = Order.create("user-1", List.of(item));
+
+        order.markReserved();
+        order.cancel();
+
+        assertEquals(OrderStatus.CANCELED, order.getOrderStatus());
+        assertNotNull(order.getCancelledAt());
     }
 }
