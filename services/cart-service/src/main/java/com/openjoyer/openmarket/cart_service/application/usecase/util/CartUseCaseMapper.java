@@ -7,6 +7,8 @@ import com.openjoyer.openmarket.cart_service.domain.model.CartItem;
 import com.openjoyer.openmarket.contracts.dto.cart.CartCheckoutItemView;
 import com.openjoyer.openmarket.contracts.dto.cart.CartCheckoutView;
 
+import java.math.BigDecimal;
+
 public class CartUseCaseMapper {
     public static CartView mapToCartView(Cart cart) {
         CartView view = new CartView();
@@ -38,7 +40,8 @@ public class CartUseCaseMapper {
                 .map(i -> new CartCheckoutItemView(
                         i.getSkuId(),
                         i.getTitleSnapshot(),
-                        i.getPriceSnapshot(),
+                        i.getImageSnapshot(),
+                        BigDecimal.valueOf(i.getPriceSnapshot()),
                         i.getQuantity()
                 )).toList());
         view.setEmpty(cart.isEmpty());
