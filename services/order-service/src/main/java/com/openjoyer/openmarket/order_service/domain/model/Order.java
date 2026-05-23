@@ -78,16 +78,22 @@ public class Order {
     }
 
     public void markReserved() {
+        if (orderStatus != OrderStatus.PENDING_RESERVATION) return;
+
         orderStatus = OrderStatus.PAYMENT_PENDING;
         reservedAt = Instant.now();
     }
 
     public void markPaid() {
+        if (orderStatus != OrderStatus.PAYMENT_PENDING) return;
+
         orderStatus = OrderStatus.PROCESSING;
         paidAt = Instant.now();
     }
 
     public void cancel() {
+        if (orderStatus != OrderStatus.PENDING_RESERVATION && orderStatus != OrderStatus.PAYMENT_PENDING) return;
+
         orderStatus = OrderStatus.CANCELED;
         cancelledAt = Instant.now();
     }

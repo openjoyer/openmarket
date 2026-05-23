@@ -48,6 +48,7 @@ class OrderTest {
         OrderItem item = OrderItem.create("sku-1", "Keyboard", "keyboard.png", BigDecimal.TEN, 1);
         Order order = Order.create("user-1", List.of(item));
 
+        order.markReserved();
         order.markPaid();
 
         assertEquals(OrderStatus.PROCESSING, order.getOrderStatus());
@@ -63,5 +64,42 @@ class OrderTest {
 
         assertEquals(OrderStatus.CANCELED, order.getOrderStatus());
         assertNotNull(order.getCancelledAt());
+    }
+
+    @Test
+    void markReserved_shouldIgnoreRepeatedReservationEvent() {
+        OrderItem item = OrderItem.create("sku-1", "Keyboard", "keyboard.png", BigDecimal.TEN, 1);
+        Order order = Order.create("user-1", List.of(item));
+
+        order.markReserved();
+        var reservedAt = order.getReservedAt();
+        order.markReserved();
+
+        assertEquals(OrderStatus.PAYMENT_PENDING, order.getOrderStatus());
+        assertEquals(reservedAt, order.getReservedAt());
+    }
+
+    @Test
+    void markPaid_shouldIgnorePaymentBeforeReservation() {
+        OrderItem item = OrderItem.create("sku-1", "Keyboard", "keyboard.png", BigDecimal.TEN, 1);
+        Order order = Order.create("user-1", List.of(item));
+
+        order.markPaid();
+
+        assertEquals(OrderStatus.PENDING_RESERVATION, order.getOrderStatus());
+        assertEquals(null, order.getPaidAt());
+    }
+
+    @Test
+    void cancel_shouldIgnoreLateCancelAfterPayment() {
+        OrderItem item = OrderItem.create("sku-1", "Keyboard", "keyboard.png", BigDecimal.TEN, 1);
+        Order order = Order.create("user-1", List.of(item));
+
+        order.markReserved();
+        order.markPaid();
+        order.cancel();
+
+        assertEquals(OrderStatus.PROCESSING, order.getOrderStatus());
+        assertEquals(null, order.getCancelledAt());
     }
 }
