@@ -5,7 +5,6 @@ import com.openjoyer.openmarket.order_service.application.dto.OrderView;
 import com.openjoyer.openmarket.order_service.application.usecase.CreateOrderUseCase;
 import com.openjoyer.openmarket.order_service.application.usecase.GetOrderByIdUseCase;
 import com.openjoyer.openmarket.order_service.application.usecase.GetOrderByUserIdUseCase;
-import com.openjoyer.openmarket.order_service.interfaces.rest.request.CreateOrderRequest;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -10,7 +10,7 @@ public final class KafkaTopics {
 
     public static final String STOCK_RESERVATION_REQUESTED = "stock.reservation.requested";
     public static final String STOCK_RESERVATION_SUCCEEDED = "stock.reservation.succeeded";
-    public static final String STOCK_RESERVATION_FAILED = "stock.reservation.succeeded";
+    public static final String STOCK_RESERVATION_FAILED = "stock.reservation.failed";
 
     private KafkaTopics(){}
 }

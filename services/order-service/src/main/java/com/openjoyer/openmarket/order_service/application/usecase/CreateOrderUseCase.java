@@ -31,15 +31,13 @@ public class CreateOrderUseCase {
         }
 
         Order order = Order.create(command.userId(), view.getItems().stream()
-                .map(item -> {
-                    OrderItem oi = new OrderItem();
-                    oi.setSkuId(item.getSkuId());
-                    oi.setQuantity(item.getQuantity());
-                    oi.setTitleSnapshot(item.getTitleSnapshot());
-                    oi.setImageSnapshot(item.getImageSnapshot());
-                    oi.setPrice(item.getPriceSnapshot());
-                    return oi;
-                }).toList()
+                .map(item -> OrderItem.create(
+                        item.getSkuId(),
+                        item.getTitleSnapshot(),
+                        item.getImageSnapshot(),
+                        item.getPriceSnapshot(),
+                        item.getQuantity()
+                )).toList()
         );
 
         Order saved = orderRepository.save(order);
