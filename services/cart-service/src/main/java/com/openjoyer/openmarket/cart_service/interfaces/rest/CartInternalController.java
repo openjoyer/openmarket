@@ -1,7 +1,7 @@
 package com.openjoyer.openmarket.cart_service.interfaces.rest;
 
 import com.openjoyer.openmarket.cart_service.application.usecase.GetCheckoutCartUseCase;
-import com.openjoyer.openmarket.contracts.cart.CartCheckoutView;
+import com.openjoyer.openmarket.contracts.dto.cart.CartCheckoutView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +16,7 @@ public class CartInternalController {
     private final GetCheckoutCartUseCase getCheckoutCartUseCase;
 
     @GetMapping("/{userId}/checkout")
-    public ResponseEntity<CartCheckoutView> getCheckoutCart(@PathVariable String userId) {
-        return ResponseEntity.ok(getCheckoutCartUseCase.handle(userId));
+    public CartCheckoutView getCheckoutCart(@PathVariable String userId) {
+        return getCheckoutCartUseCase.handle(userId);
     }
 }
