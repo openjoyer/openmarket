@@ -4,12 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class CartCheckoutItemView {
     private String skuId;
     private String titleSnapshot;
-    private double priceSnapshot;
+    private String imageSnapshot;
+    private BigDecimal priceSnapshot;
     private int quantity;
 }
