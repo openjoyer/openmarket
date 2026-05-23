@@ -25,7 +25,7 @@ class OrderDtoMapperTest {
 
         assertEquals(orderId.toString(), view.getOrderId());
         assertEquals("user-1", view.getUserId());
-        assertEquals(OrderStatus.CREATED, view.getOrderStatus());
+        assertEquals(OrderStatus.PENDING_RESERVATION, view.getOrderStatus());
         assertEquals(1, view.getItems().size());
         assertEquals("sku-1", view.getItems().get(0).getSkuId());
         assertEquals("Keyboard", view.getItems().get(0).getTitleSnapshot());

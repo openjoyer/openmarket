@@ -4,10 +4,7 @@ import com.openjoyer.openmarket.cart_service.application.usecase.GetCheckoutCart
 import com.openjoyer.openmarket.contracts.dto.cart.CartCheckoutView;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,5 +15,10 @@ public class CartInternalController {
     @GetMapping("/{userId}/checkout")
     public CartCheckoutView getCheckoutCart(@PathVariable String userId) {
         return getCheckoutCartUseCase.handle(userId);
+    }
+
+    @DeleteMapping("/{userId}/items")
+    void clearCart(@PathVariable String userId) {
+        // TODO add clear cart
     }
 }

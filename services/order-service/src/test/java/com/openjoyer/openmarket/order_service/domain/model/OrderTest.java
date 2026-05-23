@@ -18,7 +18,7 @@ class OrderTest {
         Order order = Order.create("user-1", List.of(item));
 
         assertEquals("user-1", order.getUserId());
-        assertEquals(OrderStatus.CREATED, order.getOrderStatus());
+        assertEquals(OrderStatus.PENDING_RESERVATION, order.getOrderStatus());
         assertEquals(1, order.getItems().size());
         assertSame(order, order.getItems().get(0).getOrder());
     }
@@ -50,7 +50,7 @@ class OrderTest {
 
         order.markPaid();
 
-        assertEquals(OrderStatus.PAID, order.getOrderStatus());
+        assertEquals(OrderStatus.PROCESSING, order.getOrderStatus());
         assertNotNull(order.getPaidAt());
     }
 

@@ -1,10 +1,9 @@
 package com.openjoyer.openmarket.order_service.domain.model;
 
 public enum OrderStatus {
-    CREATED,
-    PAID,
+    PENDING_RESERVATION,
+    PAYMENT_PENDING,
+    PROCESSING,
     COMPLETED,
-    CANCELED,
-    REFUNDED,
-    EXPIRED
+    CANCELED
 }

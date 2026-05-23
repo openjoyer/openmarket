@@ -42,11 +42,11 @@ public class Order {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
-    @Column(name = "paid_at")
-    private Instant paidAt;
-
     @Column(name = "reserved_at")
     private Instant reservedAt;
+
+    @Column(name = "paid_at")
+    private Instant paidAt;
 
     @Column(name = "cancelled_at")
     private Instant cancelledAt;
@@ -64,7 +64,7 @@ public class Order {
 
         Order order = new Order();
         order.userId = userId;
-        order.orderStatus = OrderStatus.CREATED;
+        order.orderStatus = OrderStatus.PENDING_RESERVATION;
         items.forEach(order::addItem);
         return order;
     }
@@ -77,8 +77,13 @@ public class Order {
         items.add(item);
     }
 
+    public void markReserved() {
+        orderStatus = OrderStatus.PAYMENT_PENDING;
+        reservedAt = Instant.now();
+    }
+
     public void markPaid() {
-        orderStatus = OrderStatus.PAID;
+        orderStatus = OrderStatus.PROCESSING;
         paidAt = Instant.now();
     }
 
