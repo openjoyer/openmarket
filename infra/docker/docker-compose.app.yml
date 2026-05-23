@@ -88,6 +88,29 @@ services:
       timeout: 5s
       retries: 10
 
+  order-service:
+    container_name: order-service
+    restart: unless-stopped
+    build:
+      context: ../.../service/order-service
+      dockerfile: Dockerfile
+    expose:
+      - "8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - backend
+    healthcheck:
+      test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health || exit 1" ]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
 #  catalog-service:
 #    container_name: catalog-service
 #    restart: unless-stopped

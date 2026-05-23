@@ -54,7 +54,7 @@ class OrderControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.orderId").value(orderId.toString()))
                 .andExpect(jsonPath("$.userId").value("user-1"))
-                .andExpect(jsonPath("$.orderStatus").value("CREATED"))
+                .andExpect(jsonPath("$.orderStatus").value("PENDING_RESERVATION"))
                 .andExpect(jsonPath("$.items[0].skuId").value("sku-1"));
     }
 
@@ -87,6 +87,6 @@ class OrderControllerTest {
 
     private OrderView orderView(UUID orderId) {
         OrderItemView item = new OrderItemView("sku-1", "Keyboard", "keyboard.png", BigDecimal.TEN, 1);
-        return new OrderView(orderId.toString(), "user-1", OrderStatus.CREATED, List.of(item));
+        return new OrderView(orderId.toString(), "user-1", OrderStatus.PENDING_RESERVATION, List.of(item));
     }
 }

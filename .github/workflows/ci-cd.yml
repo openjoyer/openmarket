@@ -131,7 +131,7 @@ jobs:
 
           printf "\n"
           printf "========================================\n"
-          printf "          MARKETPLACE CI REPORT\n"
+          printf "              CI REPORT\n"
           printf "========================================\n"
           printf "Trigger:          %s\n" "$TRIGGER"
           printf "Ref:              %s\n" "$REF_NAME"
