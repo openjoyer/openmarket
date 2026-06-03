@@ -92,7 +92,7 @@ services:
     container_name: order-service
     restart: unless-stopped
     build:
-      context: ../.../service/order-service
+      context: ../../services/order-service
       dockerfile: Dockerfile
     expose:
       - "8080"
