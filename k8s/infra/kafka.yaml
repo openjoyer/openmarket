@@ -5,6 +5,7 @@ metadata:
   namespace: openmarket
 spec:
   clusterIP: None
+  publishNotReadyAddresses: true
   selector:
     app: kafka
   ports:
@@ -72,16 +73,20 @@ spec:
             - name: kafka-data
               mountPath: /bitnami/kafka
 
+          startupProbe:
+            tcpSocket:
+              port: 9092
+            failureThreshold: 30
+            periodSeconds: 5
           readinessProbe:
             tcpSocket:
               port: 9092
-            initialDelaySeconds: 15
             periodSeconds: 10
           livenessProbe:
             tcpSocket:
               port: 9092
-            initialDelaySeconds: 30
             periodSeconds: 20
+            failureThreshold: 3
 
           resources:
             requests:
