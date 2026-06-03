@@ -98,8 +98,6 @@ services:
       dockerfile: Dockerfile
       additional_contexts:
         contracts: ../../contracts
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/marketplace
     expose:
       - "8080"
     depends_on:

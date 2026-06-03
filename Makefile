@@ -43,7 +43,7 @@ build-service: ## Build specific service (SERVICE=cart-service)
 		echo "Error: SERVICE not specified"; \
 		exit 1; \
 	fi
-	@cd services/$(SERVICE) && docker build -t $(SERVICE):latest .
+	@cd services/$(SERVICE) && docker build --build-context contracts=../../contracts -t $(SERVICE):latest .
 
 up: ## Start all services
 	@cd infra/docker && docker-compose -f docker-compose.yml up -d
