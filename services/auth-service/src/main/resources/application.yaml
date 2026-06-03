@@ -40,4 +40,4 @@ management:
     health:
       show-details: never
       probes:
-        enabled: true   # /actuator/health/{liveness,readiness} для k8s-проб
+        enabled: true
