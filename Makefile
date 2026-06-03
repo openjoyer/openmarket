@@ -36,7 +36,7 @@ coverage: ## Generate coverage reports
 	done
 
 build: ## Build all services
-	@cd infra/docker && docker-compose -f docker-compose.infra.yml -f docker-compose.app.yml build
+	@cd infra/docker && docker-compose -f docker-compose.yml build
 
 build-service: ## Build specific service (SERVICE=cart-service)
 	@if [ -z "$(SERVICE)" ]; then \
@@ -46,23 +46,23 @@ build-service: ## Build specific service (SERVICE=cart-service)
 	@cd services/$(SERVICE) && docker build -t $(SERVICE):latest .
 
 up: ## Start all services
-	@cd infra/docker && docker-compose -f docker-compose.infra.yml -f docker-compose.app.yml up -d
+	@cd infra/docker && docker-compose -f docker-compose.yml up -d
 
 up-infra: ## Start infrastructure only
-	@cd infra/docker && docker-compose -f docker-compose.infra.yml up -d
+	@cd infra/docker && docker-compose -f docker-compose.yml up -d postgres redis kafka opensearch
 
 up-service: ## Start specific service (SERVICE=cart-service)
 	@if [ -z "$(SERVICE)" ]; then \
 		echo "Error: SERVICE not specified"; \
 		exit 1; \
 	fi
-	@cd infra/docker && docker-compose -f docker-compose.app.yml up -d $(SERVICE)
+	@cd infra/docker && docker-compose -f docker-compose.yml up -d $(SERVICE)
 
 down: ## Stop all services
-	@cd infra/docker && docker-compose -f docker-compose.infra.yml -f docker-compose.app.yml down
+	@cd infra/docker && docker-compose -f docker-compose.yml down
 
 down-volumes: ## Stop and remove volumes
-	@cd infra/docker && docker-compose -f docker-compose.infra.yml -f docker-compose.app.yml down -v
+	@cd infra/docker && docker-compose -f docker-compose.yml down -v
 
 restart: down up ## Restart everything
 
@@ -71,20 +71,20 @@ restart-service: ## Restart specific service (SERVICE=cart-service)
 		echo "Error: SERVICE not specified"; \
 		exit 1; \
 	fi
-	@cd infra/docker && docker-compose -f docker-compose.app.yml restart $(SERVICE)
+	@cd infra/docker && docker-compose -f docker-compose.yml restart $(SERVICE)
 
 logs: ## Show logs
-	@cd infra/docker && docker-compose -f docker-compose.infra.yml -f docker-compose.app.yml logs -f
+	@cd infra/docker && docker-compose -f docker-compose.yml logs -f
 
 logs-service: ## Show logs for service (SERVICE=cart-service)
 	@if [ -z "$(SERVICE)" ]; then \
 		echo "Error: SERVICE not specified"; \
 		exit 1; \
 	fi
-	@cd infra/docker && docker-compose -f docker-compose.app.yml logs -f $(SERVICE)
+	@cd infra/docker && docker-compose -f docker-compose.yml logs -f $(SERVICE)
 
 ps: ## Show running containers
-	@cd infra/docker && docker-compose -f docker-compose.infra.yml -f docker-compose.app.yml ps
+	@cd infra/docker && docker-compose -f docker-compose.yml ps
 
 health: ## Check service health
 	@curl -s http://localhost:8761/actuator/health | jq . || echo "Eureka: DOWN"
@@ -98,7 +98,7 @@ clean: ## Clean build artifacts
 	done
 
 clean-docker: ## Remove Docker images
-	@docker-compose -f infra/docker/docker-compose.infra.yml -f infra/docker/docker-compose.app.yml down -v --rmi all
+	@docker-compose -f infra/docker/docker-compose.yml down -v --rmi all
 
 prune: ## Prune Docker system
 	@docker system prune -af --volumes

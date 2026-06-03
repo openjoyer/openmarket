@@ -1,4 +1,4 @@
-name: marketplace
+name: openmarket
 
 include:
   - docker-compose.app.yml
