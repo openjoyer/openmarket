@@ -111,4 +111,14 @@ dev-auth: ## Run auth-service locally
 
 ci-test: test build ## Simulate CI/CD locally
 
+GW_PORT ?= 8000
+
+k8s-gw: ## Port-forward gateway via ingress with auto-restart (http://localhost:$(GW_PORT))
+	@echo "Gateway → http://localhost:$(GW_PORT)   (Ctrl+C to stop)"
+	@while true; do \
+		kubectl port-forward -n ingress-nginx svc/ingress-nginx-controller $(GW_PORT):80; \
+		echo "port-forward dropped — restarting in 2s..."; \
+		sleep 2; \
+	done
+
 .DEFAULT_GOAL := help
