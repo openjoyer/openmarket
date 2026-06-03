@@ -73,6 +73,8 @@ services:
     build:
       context: ../../services/cart-service
       dockerfile: Dockerfile
+      additional_contexts:
+        contracts: ../../contracts
     expose:
       - "8080"
     depends_on:
@@ -92,8 +94,10 @@ services:
     container_name: order-service
     restart: unless-stopped
     build:
-      context: ../.../service/order-service
+      context: ../../services/order-service
       dockerfile: Dockerfile
+      additional_contexts:
+        contracts: ../../contracts
     expose:
       - "8080"
     depends_on:
