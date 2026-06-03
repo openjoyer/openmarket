@@ -4,5 +4,4 @@
 secrets
 .vscode
 .claude
-manual.md
-CLAUDE.md
+*.md
