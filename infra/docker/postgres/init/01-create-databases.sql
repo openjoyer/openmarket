@@ -1,0 +1,2 @@
+CREATE DATABASE marketplace;
+CREATE DATABASE auth_db;

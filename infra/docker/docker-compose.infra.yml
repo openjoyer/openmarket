@@ -29,6 +29,7 @@ services:
       - backend
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
 
   redis:
     image: redis:latest
@@ -73,7 +74,7 @@ services:
       retries: 20
 
   kafka:
-    image: bitnami/kafka:3.7
+    image: bitnamilegacy/kafka:3.7
     container_name: marketplace-kafka
     restart: unless-stopped
     ports:
