@@ -22,18 +22,21 @@ public class OrderController {
     private final CreateOrderUseCase createOrderUseCase;
 
     @GetMapping("/user")
+    @Loggable
     public ResponseEntity<List<OrderView>> getOrdersByUserId(@RequestParam("id") String userId) {
         List<OrderView> orders = getOrderByUserIdUseCase.handle(userId);
         return ResponseEntity.ok(orders);
     }
 
     @GetMapping("/{orderId}")
+    @Loggable
     public ResponseEntity<OrderView> getOrderById(@PathVariable UUID orderId) {
         OrderView view = getOrderByIdUseCase.handle(orderId);
         return ResponseEntity.ok(view);
     }
 
     @PostMapping("/create")
+    @Loggable
     public ResponseEntity<?> createOrder(@RequestParam @NotBlank String userId) {
         return ResponseEntity.ok(createOrderUseCase.handle(new CreateOrderCommand(userId)));
     }
