@@ -24,6 +24,18 @@ spec:
                 name: openmarket-config
             - secretRef:
                 name: openmarket-secrets
+          env:
+            # креды суперюзера Postgres (тот же Secret) — order ходит в БД marketplace
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: openmarket-secrets
+                  key: POSTGRES_USER
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: openmarket-secrets
+                  key: POSTGRES_PASSWORD
           resources:
             requests:
               cpu: "250m"

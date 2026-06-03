@@ -17,3 +17,6 @@ resources:
   - base/cart-service/service.yaml
   - base/order-service/deployment.yaml
   - base/order-service/service.yaml
+  - infra/postgres.yaml
+  - infra/redis.yaml
+  - infra/kafka.yaml
