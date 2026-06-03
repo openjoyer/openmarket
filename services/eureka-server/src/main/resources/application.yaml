@@ -20,3 +20,5 @@ management:
   endpoint:
     health:
       show-details: always
+      probes:
+        enabled: true   # /actuator/health/{liveness,readiness} для k8s-проб

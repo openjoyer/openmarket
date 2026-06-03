@@ -73,3 +73,13 @@ spring:
                 allowed-headers:
                   - "*"
                 allow-credentials: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true

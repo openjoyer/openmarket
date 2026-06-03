@@ -27,3 +27,12 @@ spring:
       properties:
         spring.json.add.type.headers: false
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
