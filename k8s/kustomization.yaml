@@ -11,6 +11,7 @@ resources:
   - base/eureka-server/service.yaml
   - base/api-gateway/deployment.yaml
   - base/api-gateway/service.yaml
+  - base/api-gateway/ingress.yaml
   - base/auth-service/deployment.yaml
   - base/auth-service/service.yaml
   - base/cart-service/deployment.yaml

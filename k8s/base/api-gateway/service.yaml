@@ -4,11 +4,10 @@ metadata:
   name: api-gateway
   namespace: openmarket
 spec:
-  # единственная внешняя точка входа в кластер (аналог host-порта 8081 в Compose)
-  type: NodePort
+  type: ClusterIP
   selector:
     app: api-gateway
   ports:
-    - port: 8080
+    - name: http
+      port: 8080
       targetPort: 8080
-      nodePort: 30080
