@@ -1,6 +1,8 @@
 package com.openjoyer.openmarket.order_service.application.usecase;
 
 import com.openjoyer.openmarket.contracts.events.inventory.StockReservedEvent;
+import com.openjoyer.openmarket.contracts.events.payment.PaymentRequestedEvent;
+import com.openjoyer.openmarket.order_service.application.port.EventPublisherPort;
 import com.openjoyer.openmarket.order_service.domain.exceptions.OrderNotFoundException;
 import com.openjoyer.openmarket.order_service.domain.model.Order;
 import com.openjoyer.openmarket.order_service.domain.repository.OrderRepository;
@@ -12,12 +14,24 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class HandleStockReservationSucceeded {
     private final OrderRepository orderRepository;
+    private final EventPublisherPort eventPublisherPort;
 
     @Transactional
     public void handle(StockReservedEvent event) {
         Order order = orderRepository.findById(event.orderId())
                 .orElseThrow(() -> new OrderNotFoundException(event.orderId()));
 
-        order.markReserved();
+        if(order.markReserved()) {
+            eventPublisherPort.publishPaymentRequestEvent(
+                    new PaymentRequestedEvent(
+                            order.getId(),
+                            order.getUserId(),
+                            order.getTotalAmount()
+                    )
+            );
+            // todo add metrics
+        } else {
+            // todo add metrics
+        }
     }
 }

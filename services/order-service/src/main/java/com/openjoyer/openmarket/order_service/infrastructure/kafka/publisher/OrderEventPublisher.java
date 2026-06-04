@@ -1,6 +1,7 @@
 package com.openjoyer.openmarket.order_service.infrastructure.kafka.publisher;
 
 import com.openjoyer.openmarket.contracts.events.inventory.StockReservationRequestEvent;
+import com.openjoyer.openmarket.contracts.events.payment.PaymentRequestedEvent;
 import com.openjoyer.openmarket.contracts.kafka.KafkaTopics;
 import com.openjoyer.openmarket.order_service.application.port.EventPublisherPort;
 import lombok.RequiredArgsConstructor;
@@ -15,5 +16,10 @@ public class OrderEventPublisher implements EventPublisherPort {
     @Override
     public void publishStockReservationRequestEvent(StockReservationRequestEvent event) {
         kafkaTemplate.send(KafkaTopics.STOCK_RESERVATION_REQUESTED, event.orderId().toString(), event);
+    }
+
+    @Override
+    public void publishPaymentRequestEvent(PaymentRequestedEvent event) {
+        kafkaTemplate.send(KafkaTopics.PAYMENT_REQUESTED, event.orderId().toString(), event);
     }
 }
