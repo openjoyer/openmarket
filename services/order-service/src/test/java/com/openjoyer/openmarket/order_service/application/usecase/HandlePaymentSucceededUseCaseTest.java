@@ -61,7 +61,7 @@ class HandlePaymentSucceededUseCaseTest {
     }
 
     @Test
-    void handle_shouldRecordSagaDurationOnSuccess() {
+    void handle_shouldNotRecordSagaDurationOnPayment_completionHappensOnShipment() {
         UUID orderId = UUID.randomUUID();
         Order order = order(orderId);
         order.markReserved();
@@ -69,8 +69,8 @@ class HandlePaymentSucceededUseCaseTest {
 
         useCase.handle(new PaymentSucceedEvent(orderId));
 
-        assertEquals(1L, meterRegistry.get("order.saga.duration")
-                .tag("outcome", "completed").timer().count());
+        assertEquals(OrderStatus.PROCESSING, order.getOrderStatus());
+        assertNull(meterRegistry.find("order.saga.duration").timer());
         assertNull(meterRegistry.find("order.saga.duplicate_event").counter());
     }
 

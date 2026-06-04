@@ -10,9 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
-import java.time.Instant;
-
 @Component
 @RequiredArgsConstructor
 public class HandlePaymentSucceededUseCase {
@@ -27,8 +24,6 @@ public class HandlePaymentSucceededUseCase {
 
         if (order.markPaid()) {
             cartCommandPort.clearCart(order.getUserId());
-            meterRegistry.timer("order.saga.duration", "outcome", "completed")
-                    .record(Duration.between(order.getCreatedAt(), Instant.now()));
         } else {
             meterRegistry.counter("order.saga.duplicate_event",
                     "event", "payment.succeeded").increment();
