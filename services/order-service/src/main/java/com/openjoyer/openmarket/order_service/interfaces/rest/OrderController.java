@@ -10,7 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -20,6 +22,12 @@ public class OrderController {
     private final GetOrderByIdUseCase getOrderByIdUseCase;
     private final GetOrderByUserIdUseCase getOrderByUserIdUseCase;
     private final CreateOrderUseCase createOrderUseCase;
+
+    @GetMapping("/ping")
+    @Loggable
+    public ResponseEntity<?> ping() {
+        return ResponseEntity.ok(Map.of("message", "ok", "timestamp", Instant.now()));
+    }
 
     @GetMapping("/user")
     @Loggable
