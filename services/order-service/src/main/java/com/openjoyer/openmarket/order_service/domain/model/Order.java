@@ -120,4 +120,11 @@ public class Order {
         cancelledAt = Instant.now();
         return true;
     }
+
+    public boolean compensate() {
+        if (orderStatus != OrderStatus.PROCESSING) return false;
+        orderStatus = OrderStatus.CANCELED;
+        cancelledAt = Instant.now();
+        return true;
+    }
 }

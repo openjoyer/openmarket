@@ -23,12 +23,6 @@ public class OrderController {
     private final GetOrderByUserIdUseCase getOrderByUserIdUseCase;
     private final CreateOrderUseCase createOrderUseCase;
 
-    @GetMapping("/ping")
-    @Loggable
-    public ResponseEntity<?> ping() {
-        return ResponseEntity.ok(Map.of("message", "ok", "timestamp", Instant.now()));
-    }
-
     @GetMapping("/user")
     @Loggable
     public ResponseEntity<List<OrderView>> getOrdersByUserId(@RequestParam("id") String userId) {
