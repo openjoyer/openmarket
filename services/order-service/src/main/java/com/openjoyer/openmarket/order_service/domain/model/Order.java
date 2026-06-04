@@ -48,6 +48,9 @@ public class Order {
     @Column(name = "paid_at")
     private Instant paidAt;
 
+    @Column(name = "completed_at")
+    private Instant completedAt;
+
     @Column(name = "cancelled_at")
     private Instant cancelledAt;
 
@@ -90,6 +93,14 @@ public class Order {
 
         orderStatus = OrderStatus.PROCESSING;
         paidAt = Instant.now();
+        return true;
+    }
+
+    public boolean complete() {
+        if (orderStatus != OrderStatus.PROCESSING) return false;
+
+        orderStatus = OrderStatus.COMPLETED;
+        completedAt = Instant.now();
         return true;
     }
 
