@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: eureka-server
-          image: openmarket-eureka-server:latest
-          imagePullPolicy: Never
+          image: ghcr.io/openjoyer/openmarket/eureka-server:latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8761
           resources:

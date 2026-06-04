@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: order-service
-          image: openmarket-order-service:latest
-          imagePullPolicy: Never
+          image: ghcr.io/openjoyer/openmarket/order-service:latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
           envFrom:
