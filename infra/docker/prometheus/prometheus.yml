@@ -1,0 +1,28 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: openmarket
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets:
+          - api-gateway:8080
+          - auth-service:8080
+          - cart-service:8080
+          - order-service:8080
+        labels:
+          group: app
+      - targets:
+          - eureka-server:8761
+        labels:
+          group: infra
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: '([^:]+):.*'
+        target_label: service
+        replacement: '$1'
+
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:9090']
