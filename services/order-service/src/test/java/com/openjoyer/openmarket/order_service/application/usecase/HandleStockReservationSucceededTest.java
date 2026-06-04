@@ -8,10 +8,12 @@ import com.openjoyer.openmarket.order_service.domain.model.Order;
 import com.openjoyer.openmarket.order_service.domain.model.OrderItem;
 import com.openjoyer.openmarket.order_service.domain.model.OrderStatus;
 import com.openjoyer.openmarket.order_service.domain.repository.OrderRepository;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -22,6 +24,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -36,8 +39,14 @@ class HandleStockReservationSucceededTest {
     @Mock
     private EventPublisherPort eventPublisherPort;
 
-    @InjectMocks
+    private MeterRegistry meterRegistry;
     private HandleStockReservationSucceeded useCase;
+
+    @BeforeEach
+    void setUp() {
+        meterRegistry = new SimpleMeterRegistry();
+        useCase = new HandleStockReservationSucceeded(orderRepository, eventPublisherPort, meterRegistry);
+    }
 
     @Test
     void handle_shouldMovePendingReservationOrderToPaymentPending() {
@@ -69,10 +78,11 @@ class HandleStockReservationSucceededTest {
         assertEquals(orderId, published.orderId());
         assertEquals("user-1", published.userId());
         assertEquals(0, published.amount().compareTo(new BigDecimal("35")));
+        assertNull(meterRegistry.find("order.saga.duplicate_event").counter());
     }
 
     @Test
-    void handle_shouldNotRequestPaymentTwiceOnRepeatedReservationEvent() {
+    void handle_shouldCountDuplicateAndNotRequestPaymentTwiceOnReplay() {
         UUID orderId = UUID.randomUUID();
         Order order = order(orderId);
         order.markReserved();
@@ -84,6 +94,8 @@ class HandleStockReservationSucceededTest {
         assertEquals(OrderStatus.PAYMENT_PENDING, order.getOrderStatus());
         assertEquals(reservedAt, order.getReservedAt());
         verify(eventPublisherPort, never()).publishPaymentRequestEvent(any());
+        assertEquals(1.0, meterRegistry.get("order.saga.duplicate_event")
+                .tag("event", "stock.reservation.succeeded").counter().count());
     }
 
     @Test
@@ -97,6 +109,8 @@ class HandleStockReservationSucceededTest {
 
         assertEquals(OrderStatus.CANCELED, order.getOrderStatus());
         verify(eventPublisherPort, never()).publishPaymentRequestEvent(any());
+        assertEquals(1.0, meterRegistry.get("order.saga.duplicate_event")
+                .tag("event", "stock.reservation.succeeded").counter().count());
     }
 
     @Test
