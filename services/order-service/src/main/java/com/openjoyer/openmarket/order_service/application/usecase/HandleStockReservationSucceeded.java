@@ -6,6 +6,7 @@ import com.openjoyer.openmarket.order_service.application.port.EventPublisherPor
 import com.openjoyer.openmarket.order_service.domain.exceptions.OrderNotFoundException;
 import com.openjoyer.openmarket.order_service.domain.model.Order;
 import com.openjoyer.openmarket.order_service.domain.repository.OrderRepository;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class HandleStockReservationSucceeded {
     private final OrderRepository orderRepository;
     private final EventPublisherPort eventPublisherPort;
+    private final MeterRegistry meterRegistry;
 
     @Transactional
     public void handle(StockReservedEvent event) {
@@ -29,9 +31,8 @@ public class HandleStockReservationSucceeded {
                             order.getTotalAmount()
                     )
             );
-            // todo add metrics
         } else {
-            // todo add metrics
+            meterRegistry.counter("order.saga.duplicate_event", "event", "stock.reservation.succeeded").increment();
         }
     }
 }
