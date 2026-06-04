@@ -3,4 +3,4 @@ name: openmarket
 include:
   - docker-compose.app.yml
   - docker-compose.infra.yml
-#  - docker-compose.observability.yml
+  - docker-compose.observability.yml
