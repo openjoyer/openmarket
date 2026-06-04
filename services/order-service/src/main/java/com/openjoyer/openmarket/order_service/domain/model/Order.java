@@ -9,6 +9,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,11 +49,22 @@ public class Order {
     @Column(name = "paid_at")
     private Instant paidAt;
 
+    @Column(name = "completed_at")
+    private Instant completedAt;
+
     @Column(name = "cancelled_at")
     private Instant cancelledAt;
 
     @Column(name = "refunded_at")
     private Instant refundedAt;
+
+    public BigDecimal getTotalAmount() {
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        for (OrderItem item : items) {
+            totalAmount = totalAmount.add(item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
+        }
+        return totalAmount;
+    }
 
     public static Order create(String userId, List<OrderItem> items) {
         if (userId == null || userId.isBlank()) {
@@ -93,9 +105,24 @@ public class Order {
         return true;
     }
 
+    public boolean complete() {
+        if (orderStatus != OrderStatus.PROCESSING) return false;
+
+        orderStatus = OrderStatus.COMPLETED;
+        completedAt = Instant.now();
+        return true;
+    }
+
     public boolean cancel() {
         if (orderStatus != OrderStatus.PENDING_RESERVATION && orderStatus != OrderStatus.PAYMENT_PENDING) return false;
 
+        orderStatus = OrderStatus.CANCELED;
+        cancelledAt = Instant.now();
+        return true;
+    }
+
+    public boolean compensate() {
+        if (orderStatus != OrderStatus.PROCESSING) return false;
         orderStatus = OrderStatus.CANCELED;
         cancelledAt = Instant.now();
         return true;

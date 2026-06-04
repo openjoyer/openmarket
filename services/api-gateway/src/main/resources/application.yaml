@@ -29,6 +29,11 @@ spring:
             enabled: true
 
           routes:
+            - id: order-service
+              uri: lb://order-service
+              predicates:
+                - Path=/api/v1/orders/**
+
             - id: cart-service
               uri: lb://cart-service
               predicates:

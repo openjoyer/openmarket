@@ -29,6 +29,7 @@ dependencies {
 	runtimeOnly("org.postgresql:postgresql")
 	implementation("org.springframework.kafka:spring-kafka")
 	implementation("org.springframework.boot:spring-boot-starter-kafka")
+	implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
 	implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
 	implementation("org.springframework.cloud:spring-cloud-starter-loadbalancer")
 	implementation("org.springframework.boot:spring-boot-starter-actuator")

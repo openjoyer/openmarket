@@ -184,4 +184,21 @@ class OrderTest {
         assertEquals(OrderStatus.CANCELED, order.getOrderStatus());
         assertNotNull(order.getCancelledAt());
     }
+
+    @Test
+    void getTotalAmount_shouldMultiplyPriceByQuantityForSingleItem() {
+        OrderItem item = OrderItem.create("sku-1", "Keyboard", "keyboard.png", new BigDecimal("12.50"), 3);
+        Order order = Order.create("user-1", List.of(item));
+
+        assertEquals(0, order.getTotalAmount().compareTo(new BigDecimal("37.50")));
+    }
+
+    @Test
+    void getTotalAmount_shouldSumAcrossMultipleItems() {
+        OrderItem keyboard = OrderItem.create("sku-1", "Keyboard", "keyboard.png", BigDecimal.TEN, 2);
+        OrderItem mouse = OrderItem.create("sku-2", "Mouse", "mouse.png", new BigDecimal("5"), 3);
+        Order order = Order.create("user-1", List.of(keyboard, mouse));
+
+        assertEquals(0, order.getTotalAmount().compareTo(new BigDecimal("35")));
+    }
 }

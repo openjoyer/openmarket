@@ -21,6 +21,7 @@ public class SecurityConfig {
                         .pathMatchers("/actuator/**").permitAll()
                         .pathMatchers("/api/v1/auth/**").permitAll()
                         .pathMatchers("/api/v1/cart/ping").permitAll()
+                        .pathMatchers("/api/v1/orders/ping").permitAll()
                         .pathMatchers("/api/v1/cart/**").authenticated()
                         .anyExchange().authenticated()
                 )

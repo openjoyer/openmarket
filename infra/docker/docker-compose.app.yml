@@ -118,6 +118,90 @@ services:
       timeout: 5s
       retries: 10
 
+  inventory-service:
+    container_name: inventory-service
+    restart: unless-stopped
+    build:
+      context: ../../services/inventory-service
+      dockerfile: Dockerfile
+      additional_contexts:
+        contracts: ../../contracts
+    environment:
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    expose:
+      - "8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - backend
+    healthcheck:
+      test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health || exit 1" ]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  payment-service:
+    container_name: payment-service
+    restart: unless-stopped
+    build:
+      context: ../../services/payment-service
+      dockerfile: Dockerfile
+      additional_contexts:
+        contracts: ../../contracts
+    environment:
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    expose:
+      - "8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - backend
+    healthcheck:
+      test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health || exit 1" ]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  shipment-service:
+    container_name: shipment-service
+    restart: unless-stopped
+    build:
+      context: ../../services/shipment-service
+      dockerfile: Dockerfile
+      additional_contexts:
+        contracts: ../../contracts
+    environment:
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    expose:
+      - "8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - backend
+    healthcheck:
+      test: [ "CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health || exit 1" ]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
 #  catalog-service:
 #    container_name: catalog-service
 #    restart: unless-stopped

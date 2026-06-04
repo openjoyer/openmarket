@@ -12,6 +12,7 @@ import com.openjoyer.openmarket.order_service.domain.exceptions.CartException;
 import com.openjoyer.openmarket.order_service.domain.model.Order;
 import com.openjoyer.openmarket.order_service.domain.model.OrderItem;
 import com.openjoyer.openmarket.order_service.domain.repository.OrderRepository;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,11 +23,13 @@ public class CreateOrderUseCase {
     private final CartQueryPort cartQueryPort;
     private final OrderRepository orderRepository;
     private final EventPublisherPort eventPublisherPort;
+    private final MeterRegistry meterRegistry;
 
     @Transactional
     public OrderView handle(CreateOrderCommand command) {
         CartCheckoutView view = cartQueryPort.getCartCheckout(command.userId());
         if(view == null || view.isEmpty()) {
+            meterRegistry.counter("order.rejected", "reason", "empty_cart").increment();
             throw new CartException(command.userId());
         }
 
@@ -54,6 +57,8 @@ public class CreateOrderUseCase {
                         )).toList()
         );
         eventPublisherPort.publishStockReservationRequestEvent(event);
+
+        meterRegistry.counter("order.created").increment();
         return OrderDtoMapper.toOrderView(saved);
     }
 }
