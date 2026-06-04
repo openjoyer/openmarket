@@ -21,3 +21,15 @@ resources:
   - infra/postgres.yaml
   - infra/redis.yaml
   - infra/kafka.yaml
+
+images:
+  - name: ghcr.io/openjoyer/openmarket/eureka-server
+    newTag: latest
+  - name: ghcr.io/openjoyer/openmarket/api-gateway
+    newTag: latest
+  - name: ghcr.io/openjoyer/openmarket/auth-service
+    newTag: latest
+  - name: ghcr.io/openjoyer/openmarket/cart-service
+    newTag: latest
+  - name: ghcr.io/openjoyer/openmarket/order-service
+    newTag: latest

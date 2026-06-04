@@ -121,4 +121,20 @@ k8s-gw: ## Port-forward gateway via ingress with auto-restart (http://localhost:
 		sleep 2; \
 	done
 
+K8S_NODE   ?= desktop-control-plane
+REGISTRY   ?= ghcr.io/openjoyer/openmarket
+K8S_SERVICES = eureka-server api-gateway auth-service cart-service order-service
+
+k8s-load: ## Build images, retag to registry name, load into the cluster (SERVICE=all|<svc>)
+	@if [ -z "$(SERVICE)" ]; then echo "Usage: make k8s-load SERVICE=all   (or SERVICE=order-service)"; exit 1; fi
+	@svcs="$(if $(filter all,$(SERVICE)),$(K8S_SERVICES),$(SERVICE))"; \
+	for s in $$svcs; do \
+		echo ">>> $$s: build → retag → load"; \
+		docker compose -f infra/docker/docker-compose.yml build $$s || exit 1; \
+		docker tag openmarket-$$s:latest $(REGISTRY)/$$s:latest; \
+		docker save $(REGISTRY)/$$s:latest | docker exec -i $(K8S_NODE) ctr -n k8s.io images import - || exit 1; \
+		kubectl rollout restart deploy -n openmarket $$s 2>/dev/null || true; \
+	done; \
+	echo "Done. Pods restarting with fresh images."
+
 .DEFAULT_GOAL := help

@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: auth-service
-          image: openmarket-auth-service:latest
-          imagePullPolicy: Never
+          image: ghcr.io/openjoyer/openmarket/auth-service:latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
           envFrom:

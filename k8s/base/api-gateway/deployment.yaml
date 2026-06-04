@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: api-gateway
-          image: openmarket-api-gateway:latest
-          imagePullPolicy: Never
+          image: ghcr.io/openjoyer/openmarket/api-gateway:latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
           envFrom:

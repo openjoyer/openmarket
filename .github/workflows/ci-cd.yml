@@ -82,6 +82,69 @@ jobs:
           path: services/${{ matrix.service }}/build/reports/tests/
           retention-days: 7
 
+  build-push:
+    name: Build & Push Images
+    needs: [detect-changes, test-unit]
+    if: github.event_name == 'push' && needs.detect-changes.outputs.services != '[]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.detect-changes.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: services/${{ matrix.service }}
+          build-contexts: |
+            contracts=contracts
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/openmarket/${{ matrix.service }}:${{ github.sha }}
+            ghcr.io/${{ github.repository_owner }}/openmarket/${{ matrix.service }}:latest
+
+  deploy:
+    name: Deploy to Kubernetes
+    needs: [detect-changes, build-push]
+    if: github.event_name == 'push' && (github.ref_name == 'master' || github.ref_name == 'develop') && vars.DEPLOY_ENABLED == 'true' && needs.detect-changes.outputs.services != '[]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install kustomize
+        run: |
+          curl -sfL "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+          sudo mv kustomize /usr/local/bin/
+
+      - name: Pin image tags to commit SHA
+        working-directory: k8s
+        run: |
+          for svc in $(echo '${{ needs.detect-changes.outputs.services }}' | jq -r '.[]'); do
+            img="ghcr.io/${{ github.repository_owner }}/openmarket/$svc"
+            kustomize edit set image "$img=$img:${{ github.sha }}"
+          done
+
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG }}" | base64 -d > ~/.kube/config
+
+      - name: Apply manifests
+        run: kubectl apply -k k8s/
+
   pr-checks:
     name: PR Checks
     needs: [detect-changes, test-unit]

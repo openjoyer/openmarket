@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: cart-service
-          image: openmarket-cart-service:latest
-          imagePullPolicy: Never
+          image: ghcr.io/openjoyer/openmarket/cart-service:latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
           envFrom:
