@@ -98,6 +98,9 @@ services:
       dockerfile: Dockerfile
       additional_contexts:
         contracts: ../../contracts
+    environment:
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
     expose:
       - "8080"
     depends_on:
