@@ -1,5 +1,6 @@
 package com.openjoyer.openmarket.cart_service.interfaces.rest;
 
+import com.openjoyer.openmarket.cart_service.application.usecase.ClearCartUseCase;
 import com.openjoyer.openmarket.cart_service.application.usecase.GetCheckoutCartUseCase;
 import com.openjoyer.openmarket.contracts.dto.cart.CartCheckoutView;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/internal/cart")
 public class CartInternalController {
     private final GetCheckoutCartUseCase getCheckoutCartUseCase;
+    private final ClearCartUseCase clearCartUseCase;
 
     @GetMapping("/{userId}/checkout")
     public CartCheckoutView getCheckoutCart(@PathVariable String userId) {
@@ -19,6 +21,6 @@ public class CartInternalController {
 
     @DeleteMapping("/{userId}/items")
     void clearCart(@PathVariable String userId) {
-        // TODO add clear cart
+        clearCartUseCase.handle(userId);
     }
 }
