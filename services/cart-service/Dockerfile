@@ -2,8 +2,6 @@ FROM gradle:8.10.0-jdk21 AS build
 
 WORKDIR /app/services/cart-service
 
-# contracts is a composite build (includeBuild("../../contracts")); it is supplied
-# as the named build context "contracts" declared in docker-compose.app.yml
 COPY --from=contracts . /app/contracts
 
 COPY build.gradle.kts settings.gradle.kts gradlew ./
