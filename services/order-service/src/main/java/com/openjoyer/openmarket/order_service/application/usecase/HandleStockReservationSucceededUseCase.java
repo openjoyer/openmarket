@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
-public class HandleStockReservationSucceeded {
+public class HandleStockReservationSucceededUseCase {
     private final OrderRepository orderRepository;
     private final EventPublisherPort eventPublisherPort;
     private final MeterRegistry meterRegistry;

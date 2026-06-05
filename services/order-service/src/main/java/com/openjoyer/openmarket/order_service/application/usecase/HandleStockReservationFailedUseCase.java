@@ -14,7 +14,7 @@ import java.time.Instant;
 
 @Component
 @RequiredArgsConstructor
-public class HandleStockReservationFailed {
+public class HandleStockReservationFailedUseCase {
     private final OrderRepository orderRepository;
     private final MeterRegistry meterRegistry;
 
