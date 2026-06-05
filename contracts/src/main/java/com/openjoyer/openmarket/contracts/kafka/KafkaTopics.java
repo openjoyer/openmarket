@@ -14,6 +14,7 @@ public final class KafkaTopics {
     public static final String STOCK_RESERVATION_SUCCEEDED = "stock.reservation.succeeded";
     public static final String STOCK_RESERVATION_FAILED = "stock.reservation.failed";
     public static final String STOCK_RELEASE_REQUESTED = "stock.release.requested";
+    public static final String STOCK_RELEASE_SUCCEEDED = "stock.release.succeeded";
 
     public static final String SHIPMENT_REQUESTED = "shipment.requested";
     public static final String SHIPMENT_SUCCEEDED = "shipment.succeeded";
