@@ -9,6 +9,7 @@ public class InventoryDtoMapper {
         reservationView.setSkuId(reservation.getSkuId());
         reservationView.setQuantity(reservation.getQuantity());
         reservationView.setStatus(reservation.getStatus());
+        reservationView.setOrderId(reservation.getOrderId());
         return reservationView;
     }
 }
