@@ -44,6 +44,11 @@ public class Cart {
         this.updatedAt = Instant.now();
     }
 
+    public void clear() {
+        this.items.clear();
+        this.updatedAt = Instant.now();
+    }
+
     public void removeItem(String skuId, int quantity) {
         Optional<CartItem> foundItem = items.stream()
                 .filter(i -> i.getSkuId().equals(skuId))

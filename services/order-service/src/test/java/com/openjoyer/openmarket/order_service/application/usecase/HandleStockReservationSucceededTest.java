@@ -40,12 +40,12 @@ class HandleStockReservationSucceededTest {
     private EventPublisherPort eventPublisherPort;
 
     private MeterRegistry meterRegistry;
-    private HandleStockReservationSucceeded useCase;
+    private HandleStockReservationSucceededUseCase useCase;
 
     @BeforeEach
     void setUp() {
         meterRegistry = new SimpleMeterRegistry();
-        useCase = new HandleStockReservationSucceeded(orderRepository, eventPublisherPort, meterRegistry);
+        useCase = new HandleStockReservationSucceededUseCase(orderRepository, eventPublisherPort, meterRegistry);
     }
 
     @Test

@@ -33,12 +33,12 @@ class HandleStockReservationFailedTest {
     private OrderRepository orderRepository;
 
     private MeterRegistry meterRegistry;
-    private HandleStockReservationFailed useCase;
+    private HandleStockReservationFailedUseCase useCase;
 
     @BeforeEach
     void setUp() {
         meterRegistry = new SimpleMeterRegistry();
-        useCase = new HandleStockReservationFailed(orderRepository, meterRegistry);
+        useCase = new HandleStockReservationFailedUseCase(orderRepository, meterRegistry);
     }
 
     @Test

@@ -11,42 +11,74 @@ jobs:
     name: Detect Changed Services
     runs-on: ubuntu-latest
     outputs:
-      services: ${{ steps.filter.outputs.changes }}
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      services: ${{ steps.detect.outputs.services }}
+      matrix: ${{ steps.detect.outputs.matrix }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - uses: dorny/paths-filter@v3
-        id: filter
-        with:
-          filters: |
-            api-gateway:
-              - 'services/api-gateway/**'
-            auth-service:
-              - 'services/auth-service/**'
-            cart-service:
-              - 'services/cart-service/**'
-              - 'contracts/**'
-            catalog-service:
-              - 'services/catalog-service/**'
-            order-service:
-              - 'services/order-service/**'
-              - 'contracts/**'
-            eureka-server:
-              - 'services/eureka-server/**'
-
-      - name: Set Matrix
-        id: set-matrix
+      - name: Detect changed services
+        id: detect
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_REF: ${{ github.base_ref }}
+          BEFORE_SHA: ${{ github.event.before }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
-          CHANGES='${{ steps.filter.outputs.changes }}'
-          echo "Changes detected: $CHANGES"
-          if [ "$CHANGES" = "[]" ] || [ -z "$CHANGES" ]; then
-            echo "matrix={\"service\":[]}" >> $GITHUB_OUTPUT
+          set -euo pipefail
+
+          # Resolve the commit range to diff against (PR base, or previous push tip).
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            git fetch --quiet origin "$BASE_REF"
+            RANGE="origin/${BASE_REF}...HEAD"
           else
-            echo "matrix={\"service\":$CHANGES}" >> $GITHUB_OUTPUT
+            git fetch --quiet origin "$DEFAULT_BRANCH" || true
+            if [ -z "${BEFORE_SHA:-}" ] \
+               || [ "$BEFORE_SHA" = "0000000000000000000000000000000000000000" ] \
+               || ! git cat-file -e "${BEFORE_SHA}^{commit}" 2>/dev/null; then
+              BASE=$(git merge-base "origin/${DEFAULT_BRANCH}" HEAD 2>/dev/null || git rev-parse HEAD~1)
+            else
+              BASE="$BEFORE_SHA"
+            fi
+            RANGE="${BASE}..HEAD"
           fi
+
+          CHANGED=$(git diff --name-only "$RANGE")
+          echo "Diff range: $RANGE"
+          echo "Changed files:"; echo "$CHANGED"
+
+          # The shared contracts module triggers rebuilds of every service that consumes it.
+          CONTRACTS_CHANGED=false
+          if echo "$CHANGED" | grep -q '^contracts/'; then
+            CONTRACTS_CHANGED=true
+          fi
+          echo "contracts changed: $CONTRACTS_CHANGED"
+
+          # Auto-discover services: any services/<name> with a Dockerfile and a gradle wrapper.
+          SERVICES=()
+          for dir in services/*/; do
+            svc=$(basename "$dir")
+            [ -f "${dir}Dockerfile" ] || continue
+            [ -f "${dir}gradlew" ] || continue
+
+            if echo "$CHANGED" | grep -q "^services/${svc}/"; then
+              SERVICES+=("$svc")
+            elif [ "$CONTRACTS_CHANGED" = true ] \
+                 && grep -qs 'includeBuild("../../contracts")' "${dir}settings.gradle.kts"; then
+              SERVICES+=("$svc")
+            fi
+          done
+
+          if [ ${#SERVICES[@]} -eq 0 ]; then
+            JSON='[]'
+          else
+            JSON=$(printf '%s\n' "${SERVICES[@]}" | jq -R . | jq -cs .)
+          fi
+
+          echo "Detected services: $JSON"
+          echo "services=$JSON" >> "$GITHUB_OUTPUT"
+          echo "matrix={\"service\":$JSON}" >> "$GITHUB_OUTPUT"
 
   test-unit:
     name: Unit Tests
