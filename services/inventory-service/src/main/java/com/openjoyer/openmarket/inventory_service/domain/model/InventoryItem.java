@@ -3,16 +3,15 @@ package com.openjoyer.openmarket.inventory_service.domain.model;
 import com.openjoyer.openmarket.inventory_service.domain.exceptions.InsufficientStockException;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.Instant;
 
 @Entity
 @Table(name = "inventory_items")
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
 public class InventoryItem {
     @Id
     @Column(name = "sku_id")
@@ -22,6 +21,20 @@ public class InventoryItem {
 
     @Version
     private long version;
+
+    public static InventoryItem of(String skuId, int quantity) {
+        InventoryItem inventoryItem = new InventoryItem();
+        inventoryItem.skuId = skuId;
+        inventoryItem.available = quantity;
+        inventoryItem.reserved = 0;
+
+        return inventoryItem;
+    }
+
+    public void replenish(int quantity) {
+        if(quantity <= 0) return;
+        this.available += quantity;
+    }
 
     public void reserve(int quantity) {
         if (quantity <= 0) {
