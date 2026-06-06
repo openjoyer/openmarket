@@ -4,6 +4,7 @@ import com.openjoyer.openmarket.inventory_service.domain.model.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -12,4 +13,6 @@ public interface ReservationJpaRepository extends JpaRepository<Reservation, UUI
     boolean existsByOrderId(UUID orderId);
 
     Optional<Reservation> findByOrderId(UUID orderId);
+
+    List<Reservation> findAllByOrderId(UUID orderId);
 }

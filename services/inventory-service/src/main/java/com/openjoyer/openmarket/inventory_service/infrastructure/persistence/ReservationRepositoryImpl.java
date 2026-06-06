@@ -5,6 +5,7 @@ import com.openjoyer.openmarket.inventory_service.domain.repository.ReservationR
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -26,5 +27,10 @@ public class ReservationRepositoryImpl implements ReservationRepository {
     @Override
     public Optional<Reservation> findByOrderId(UUID orderId) {
         return repo.findByOrderId(orderId);
+    }
+
+    @Override
+    public List<Reservation> findAllByOrderId(UUID orderId) {
+        return repo.findAllByOrderId(orderId);
     }
 }
